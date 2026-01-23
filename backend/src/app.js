@@ -3,7 +3,7 @@ import Fastify from "fastify";
 import payRazorpay from "./plugins/razorpay.js";
 const fastify = Fastify({ logger: true });
 await fastify.register(cors, {
-  origin: "http://localhost:5173",
+  origin: process.env.CORS_ORIGIN,
 });
 
 /* ===================== API ROUTES ===================== */
