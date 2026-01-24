@@ -16,11 +16,13 @@ const SignIn = () => {
   const { AlertComponent, showAlert } = useAlert();
   const { login } = useAuth();
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     rememberMe: false,
   });
+  
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 

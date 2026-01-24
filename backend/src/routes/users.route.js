@@ -14,9 +14,9 @@ const userRoutes = async (fastify) => {
 const paymentRoute = async (fastify) => {
   fastify.post(
     "/create-order",
-    {
-      preHandler: [fastify.authenticate],
-    },
+    // {
+    //   preHandler: [fastify.authenticate],
+    // },
     createOrder,
   );
 };

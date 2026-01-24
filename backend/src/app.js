@@ -8,6 +8,9 @@ await fastify.register(cors, {
 
 /* ===================== API ROUTES ===================== */
 import { userRoutes, paymentRoute } from "./routes/users.route.js";
+import dbPlugin from "./database/db.js";
+
+fastify.register(dbPlugin)
 fastify.register(userRoutes, {
   prefix: "/api/users",
 });
