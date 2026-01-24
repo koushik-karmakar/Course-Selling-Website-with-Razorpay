@@ -56,17 +56,20 @@ const EnrollmentPage = () => {
   const enrollUserInCourse = async () => {
     try {
       setTimeout(() => {
-        showAlert({
-          type: "success",
-          title: "Enrollment Successful!",
-          message: `You have successfully enrolled in "${course.title}". You can now access all course materials.`,
-          showRedirect: true,
-          redirectText: "Start Learning",
-          redirectTo: `/course/${course.id}/learn`,
-          onRedirect: () => {
-            navigate(`/course/${course.id}/learn`);
-          },
+        navigate(`/checkout/${course.url}`, {
+          state: { course: course }
         });
+        // showAlert({
+        //   type: "success",
+        //   title: "Enrollment Successful!",
+        //   message: `You have successfully enrolled in "${course.title}". You can now access all course materials.`,
+        //   showRedirect: true,
+        //   redirectText: "Start Learning",
+        //   redirectTo: `/course/${course.id}/learn`,
+        //   onRedirect: () => {
+        //     navigate(`/course/${course.id}/learn`);
+        //   },
+        // });
       }, 1000);
     } catch (error) {
       showAlert({
@@ -132,12 +135,7 @@ const EnrollmentPage = () => {
                     CodeMaster
                   </div>
                 </div>
-                <button
-                  onClick={handlePurchase}
-                  className="cursor-pointer px-6 py-2 bg-linear-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all"
-                >
-                  Buy Now ₹1,999
-                </button>
+
               </div>
             </div>
           </div>
@@ -226,11 +224,10 @@ const EnrollmentPage = () => {
                       <button
                         key={section}
                         onClick={() => setSelectedSection(section)}
-                        className={`flex-1 py-3 px-4 rounded-lg font-medium capitalize transition-all ${
-                          selectedSection === section
+                        className={`flex-1 py-3 px-4 rounded-lg font-medium capitalize transition-all ${selectedSection === section
                             ? "bg-linear-to-r from-blue-500 to-purple-600 text-white"
                             : "text-gray-400 hover:text-white"
-                        }`}
+                          }`}
                       >
                         {section}
                       </button>

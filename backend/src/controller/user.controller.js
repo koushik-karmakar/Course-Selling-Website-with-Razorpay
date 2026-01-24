@@ -16,7 +16,7 @@ const registerUser = async (request, reply) => {
   }
 
   const { hash, salt } = await hashPassword(password);
-  const [result] = await request.server.db.query(
+  await request.server.db.query(
     `INSERT INTO users 
      (first_name, last_name, email, number, password, salt)
      VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -35,12 +35,12 @@ const loginUser = async (request, reply) => {
     throw new ApiErrorHandle(400, "All fields are required");
   }
 
-  const [row] = await request.server.db.query("SELECT * FROM users WHERE email = $1", [email]);
+  const { rows } = await request.server.db.query("SELECT * FROM users WHERE email = $1", [email]);
 
-  if (row.length == 0) {
+  if (rows.length === 0) {
     throw new ApiErrorHandle(404, "User not found");
   }
-  const user = row[0];
+  const user = rows[0];
 
   const isPasswordMatch = await verifyPassword(
     password,
@@ -70,9 +70,9 @@ const verifyUser = async (request, reply) => {
     throw new ApiErrorHandle(400, "Invalid Email");
   }
 
-  const [row] = await request.server.db.query("SELECT id FROM users WHERE email = $1", [email]);
+  const { rows } = await request.server.db.query("SELECT id FROM users WHERE email = $1", [email]);
 
-  if (row.length == 0) {
+  if (rows.length == 0) {
     throw new ApiErrorHandle(404, "User not found");
   }
 
