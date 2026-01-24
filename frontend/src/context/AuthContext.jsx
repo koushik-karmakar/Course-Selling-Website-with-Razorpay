@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
       if (!response.data) {
         return {
           success: false,
-          message: "Login failed",
+          message: response.data.message,
         };
       }
       localStorage.setItem(

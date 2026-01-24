@@ -1,5 +1,4 @@
-import { ApiErrorHandle } from "../utils/ApiErrorHandler.js";
-import db from "../database/db.js";
+import { ApiErrorHandle } from "../utils/ApiErrorHandler.js"
 import { hashPassword, verifyPassword } from "../utils/password.js";
 const registerUser = async (request, reply) => {
   const { firstName, lastName, email, mobile, password } = request.body;
@@ -7,8 +6,8 @@ const registerUser = async (request, reply) => {
     throw new ApiErrorHandle(400, "All fields are required");
   }
 
-  const [existedUser] = await db.query(
-    "SELECT id FROM users WHERE email = ? OR number = ?",
+  const [existedUser] = await request.server.db.query(
+    "SELECT id FROM users WHERE email = $1 OR number = $2",
     [email, mobile],
   );
 
@@ -17,10 +16,10 @@ const registerUser = async (request, reply) => {
   }
 
   const { hash, salt } = await hashPassword(password);
-  const [result] = await db.query(
+  const [result] = await request.server.db.query(
     `INSERT INTO users 
      (first_name, last_name, email, number, password, salt)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+     VALUES ($1, $2, $3, $4, $5, $6)`,
     [firstName, lastName, email, mobile, hash, salt],
   );
 
@@ -36,7 +35,7 @@ const loginUser = async (request, reply) => {
     throw new ApiErrorHandle(400, "All fields are required");
   }
 
-  const [row] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+  const [row] = await request.server.db.query("SELECT * FROM users WHERE email = $1", [email]);
 
   if (row.length == 0) {
     throw new ApiErrorHandle(404, "User not found");
@@ -71,7 +70,7 @@ const verifyUser = async (request, reply) => {
     throw new ApiErrorHandle(400, "Invalid Email");
   }
 
-  const [row] = await db.query("SELECT id FROM users WHERE email = ?", [email]);
+  const [row] = await request.server.db.query("SELECT id FROM users WHERE email = $1", [email]);
 
   if (row.length == 0) {
     throw new ApiErrorHandle(404, "User not found");

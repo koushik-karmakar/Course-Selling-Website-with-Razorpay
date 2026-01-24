@@ -12,13 +12,13 @@ const userRoutes = async (fastify) => {
 };
 
 const paymentRoute = async (fastify) => {
-  fastify.post(
-    "/create-order",
-    // {
-    //   preHandler: [fastify.authenticate],
-    // },
-    createOrder,
-  );
+  // fastify.post(
+  //   "/create-order",
+  //   // {
+  //   //   preHandler: [fastify.authenticate],
+  //   // },
+  //   createOrder,
+  // );
 };
 
 export { userRoutes, paymentRoute };

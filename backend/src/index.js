@@ -1,7 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config();
-// import db from "./database/db.js";
-
 import { fastify } from "./app.js";
 const PORT = process.env.PORT || 3000;
 

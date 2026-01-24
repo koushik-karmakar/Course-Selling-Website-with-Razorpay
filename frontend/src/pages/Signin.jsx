@@ -22,7 +22,7 @@ const SignIn = () => {
     password: "",
     rememberMe: false,
   });
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -85,7 +85,7 @@ const SignIn = () => {
         showAlert({
           type: "success",
           title: "Signin Successful",
-          message: result.message || "Login successful",
+          message: result.message,
           showRedirect: false,
         });
         setTimeout(() => {
