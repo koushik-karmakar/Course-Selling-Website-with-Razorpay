@@ -25,7 +25,7 @@ const EnrollmentPage = () => {
   const navigate = useNavigate();
   const [selectedSection, setSelectedSection] = useState("overview");
   const [expandedSyllabus, setExpandedSyllabus] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const { AlertComponent, showAlert } = useAlert();
 
   const isUserLoggedIn = () => {
@@ -54,23 +54,11 @@ const EnrollmentPage = () => {
   };
 
   const enrollUserInCourse = async () => {
+    setIsLoading(true);
     try {
-      setTimeout(() => {
-        navigate(`/checkout/${course.url}`, {
-          state: { course: course }
-        });
-        // showAlert({
-        //   type: "success",
-        //   title: "Enrollment Successful!",
-        //   message: `You have successfully enrolled in "${course.title}". You can now access all course materials.`,
-        //   showRedirect: true,
-        //   redirectText: "Start Learning",
-        //   redirectTo: `/course/${course.id}/learn`,
-        //   onRedirect: () => {
-        //     navigate(`/course/${course.id}/learn`);
-        //   },
-        // });
-      }, 1000);
+      navigate(`/checkout/${course.url}`, {
+        state: { course: course }
+      });
     } catch (error) {
       showAlert({
         type: "error",
@@ -78,6 +66,8 @@ const EnrollmentPage = () => {
         message:
           "There was an error processing your enrollment. Please try again.",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -225,8 +215,8 @@ const EnrollmentPage = () => {
                         key={section}
                         onClick={() => setSelectedSection(section)}
                         className={`flex-1 py-3 px-4 rounded-lg font-medium capitalize transition-all ${selectedSection === section
-                            ? "bg-linear-to-r from-blue-500 to-purple-600 text-white"
-                            : "text-gray-400 hover:text-white"
+                          ? "bg-linear-to-r from-blue-500 to-purple-600 text-white"
+                          : "text-gray-400 hover:text-white"
                           }`}
                       >
                         {section}
@@ -442,9 +432,27 @@ const EnrollmentPage = () => {
 
                     <button
                       onClick={handlePurchase}
-                      className="cursor-pointer w-full py-3 mb-4 rounded-xl bg-linear-to-r from-blue-500 to-purple-600 text-white font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-blue-500/25"
+                      disabled={isLoading}
+                      className="cursor-pointer w-full py-3 mb-4 rounded-xl bg-linear-to-r from-blue-500 to-purple-600 text-white font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-blue-500/25 disabled:opacity-70 disabled:cursor-not-allowed relative group"
                     >
-                      Enroll Now
+                      {isLoading ? (
+                        <div className="flex items-center justify-center space-x-2">
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Processing...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center space-x-2">
+                          <span>Enroll Now</span>
+                          <svg
+                            className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                          </svg>
+                        </div>
+                      )}
                     </button>
 
                     <p className="text-center text-sm text-gray-400">
