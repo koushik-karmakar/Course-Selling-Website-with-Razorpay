@@ -17,29 +17,18 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const savedUser = localStorage.getItem("code-master-user");
-      if (savedUser) {
-        try {
-          const userData = JSON.parse(savedUser);
+      try {
+        const backend = import.meta.env.VITE_BACKEND_PORT_LINK;
+        const { data } = await axios.get(`${backend}/api/users/me`, {
+          withCredentials: true,
+        });
 
-          const backend = import.meta.env.VITE_BACKEND_PORT_LINK;
-          const response = await axios.post(`${backend}/api/users/verify`, {
-            email: userData.email,
-          });
-
-          if (response.data.exists) {
-            setUser(userData);
-          } else {
-            localStorage.removeItem("code-master-user");
-            setUser(null);
-          }
-        } catch (error) {
-          console.error("Auth verification failed:", error);
-          localStorage.removeItem("code-master-user");
-          setUser(null);
-        }
+        setUser(data.user);
+      } catch (error) {
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     checkAuth();
@@ -48,11 +37,15 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const backend = import.meta.env.VITE_BACKEND_PORT_LINK;
-      const response = await axios.post(`${backend}/api/users/login`, {
-        email,
-        password,
-      });
-      if (!response.data) {
+      const response = await axios.post(
+        `${backend}/api/users/login`,
+        {
+          email,
+          password,
+        },
+        { withCredentials: true },
+      );
+      if (!response.data.success) {
         return {
           success: false,
           message: response.data.message,
@@ -86,7 +79,9 @@ export const AuthProvider = ({ children }) => {
       const backend = import.meta.env.VITE_BACKEND_PORT_LINK;
       const response = await axios.post(
         `${backend}/api/users/register`,
-        userData,
+        userData, {
+        withCredentials: true
+      }
       );
 
       localStorage.setItem(

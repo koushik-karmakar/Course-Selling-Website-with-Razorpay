@@ -39,10 +39,16 @@ const SignIn = () => {
       setIsLoading(true);
 
       const backend = import.meta.env.VITE_BACKEND_PORT_LINK;
-      const response = await axios.post(`${backend}/api/users/login`, {
-        email: formData.email.trim().toLowerCase(),
-        password: formData.password.trim(),
-      });
+      const response = await axios.post(
+        `${backend}/api/users/login`,
+        {
+          email: formData.email.trim().toLowerCase(),
+          password: formData.password.trim(),
+        },
+        {
+          withCredentials: true,
+        },
+      );
 
       console.log(response.data);
       showAlert({

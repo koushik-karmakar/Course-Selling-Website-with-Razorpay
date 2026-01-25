@@ -8,17 +8,17 @@ import {
 const userRoutes = async (fastify) => {
   fastify.post("/register", registerUser);
   fastify.post("/login", loginUser);
-  fastify.post("/verify", verifyUser);
+  fastify.get("/me", { preHandler: fastify.requireLogin }, verifyUser);
 };
 
 const paymentRoute = async (fastify) => {
-  // fastify.post(
-  //   "/create-order",
-  //   // {
-  //   //   preHandler: [fastify.authenticate],
-  //   // },
-  //   createOrder,
-  // );
+  fastify.post(
+    "/create-order",
+    {
+      preHandler: fastify.requireLogin,
+    },
+    createOrder,
+  );
 };
 
 export { userRoutes, paymentRoute };

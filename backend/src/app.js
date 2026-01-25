@@ -1,22 +1,40 @@
 import cors from "@fastify/cors";
 import Fastify from "fastify";
+import fs from "fs";
+import crypto from "crypto";
+import secureSession from "@fastify/secure-session";
 import payRazorpay from "./plugins/razorpay.js";
 const fastify = Fastify({ logger: true });
 await fastify.register(cors, {
   origin: "http://localhost:5173",
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 });
 
 /* ===================== API ROUTES ===================== */
 import { userRoutes, paymentRoute } from "./routes/users.route.js";
 import dbPlugin from "./database/db.js";
+import authSession from "./plugins/authSession.js";
 
-fastify.register(dbPlugin)
+fastify.register(secureSession, {
+  key: crypto.randomBytes(32),
+  cookie: {
+    path: "/",
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  },
+});
+
+fastify.register(authSession);
+fastify.register(dbPlugin);
+fastify.register(payRazorpay);
+
 fastify.register(userRoutes, {
   prefix: "/api/users",
 });
 fastify.register(paymentRoute, {
-  prefix: "/payment",
+  prefix: "/api/payment",
 });
-fastify.register(payRazorpay);
+
 export { fastify };

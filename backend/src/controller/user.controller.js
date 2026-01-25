@@ -1,4 +1,4 @@
-import { ApiErrorHandle } from "../utils/ApiErrorHandler.js"
+import { ApiErrorHandle } from "../utils/ApiErrorHandler.js";
 import { hashPassword, verifyPassword } from "../utils/password.js";
 const registerUser = async (request, reply) => {
   const { firstName, lastName, email, mobile, password } = request.body;
@@ -6,12 +6,12 @@ const registerUser = async (request, reply) => {
     throw new ApiErrorHandle(400, "All fields are required");
   }
 
-  const [existedUser] = await request.server.db.query(
+  const { rows } = await request.server.db.query(
     "SELECT id FROM users WHERE email = $1 OR number = $2",
     [email, mobile],
   );
 
-  if (existedUser.length > 0) {
+  if (rows.length > 0) {
     throw new ApiErrorHandle(409, "User already exists");
   }
 
@@ -35,7 +35,10 @@ const loginUser = async (request, reply) => {
     throw new ApiErrorHandle(400, "All fields are required");
   }
 
-  const { rows } = await request.server.db.query("SELECT * FROM users WHERE email = $1", [email]);
+  const { rows } = await request.server.db.query(
+    "SELECT * FROM users WHERE email = $1",
+    [email],
+  );
 
   if (rows.length === 0) {
     throw new ApiErrorHandle(404, "User not found");
@@ -52,6 +55,13 @@ const loginUser = async (request, reply) => {
     throw new ApiErrorHandle(401, "Incorrect password");
   }
 
+  request.session.set("user", {
+    id: user.id,
+    email: user.email,
+    firstName: user.first_name,
+    lastName: user.last_name,
+  });
+
   return reply.code(200).send({
     success: true,
     message: "Login successful",
@@ -65,20 +75,9 @@ const loginUser = async (request, reply) => {
 };
 
 const verifyUser = async (request, reply) => {
-  const { email } = request.body;
-  if (!email) {
-    throw new ApiErrorHandle(400, "Invalid Email");
-  }
-
-  const { rows } = await request.server.db.query("SELECT id FROM users WHERE email = $1", [email]);
-
-  if (rows.length == 0) {
-    throw new ApiErrorHandle(404, "User not found");
-  }
-
-  return reply.code(200).send({
-    exists: true,
+  const user = request.user;
+  return reply.send({
+    user,
   });
 };
-
 export { registerUser, loginUser, verifyUser };
