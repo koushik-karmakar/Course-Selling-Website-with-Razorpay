@@ -80,4 +80,13 @@ const verifyUser = async (request, reply) => {
     user,
   });
 };
-export { registerUser, loginUser, verifyUser };
+
+const logoutUser = async (request, reply) => {
+  request.session.delete();
+
+  reply.send({
+    success: true,
+    message: "Logged out successfully",
+  });
+};
+export { registerUser, loginUser, verifyUser, logoutUser };

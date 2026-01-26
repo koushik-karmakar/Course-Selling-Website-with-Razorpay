@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Play,
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { coursesData } from "../data/coursesData.jsx";
 import { useAlert } from "../components/Alert.jsx";
+import axios from "axios";
 
 const EnrollmentPage = () => {
   const navigate = useNavigate();
@@ -28,12 +29,24 @@ const EnrollmentPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { AlertComponent, showAlert } = useAlert();
 
-  const isUserLoggedIn = () => {
-    return localStorage.getItem("code-master-user") !== null;
+  const isUserLoggedIn = async () => {
+    try {
+      const backend = import.meta.env.VITE_BACKEND_PORT_LINK;
+      const { data } = await axios.get(`${backend}/api/users/me`, {
+        withCredentials: true,
+      });
+
+      console.log(data);
+      return data.user;
+    } catch (err) {
+      return null;
+    }
   };
 
-  const handleEnrollment = () => {
-    if (!isUserLoggedIn()) {
+  const handleEnrollment = async () => {
+    const user = await isUserLoggedIn();
+    console.log(user);
+    if (!user) {
       showAlert({
         type: "warning",
         title: "Login Required",
@@ -57,7 +70,7 @@ const EnrollmentPage = () => {
     setIsLoading(true);
     try {
       navigate(`/checkout/${course.url}`, {
-        state: { course: course }
+        state: { course: course },
       });
     } catch (error) {
       showAlert({
@@ -125,7 +138,6 @@ const EnrollmentPage = () => {
                     CodeMaster
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
@@ -214,10 +226,11 @@ const EnrollmentPage = () => {
                       <button
                         key={section}
                         onClick={() => setSelectedSection(section)}
-                        className={`flex-1 py-3 px-4 rounded-lg font-medium capitalize transition-all ${selectedSection === section
-                          ? "bg-linear-to-r from-blue-500 to-purple-600 text-white"
-                          : "text-gray-400 hover:text-white"
-                          }`}
+                        className={`flex-1 py-3 px-4 rounded-lg font-medium capitalize transition-all ${
+                          selectedSection === section
+                            ? "bg-linear-to-r from-blue-500 to-purple-600 text-white"
+                            : "text-gray-400 hover:text-white"
+                        }`}
                       >
                         {section}
                       </button>
@@ -449,7 +462,12 @@ const EnrollmentPage = () => {
                             stroke="currentColor"
                             viewBox="0 0 24 24"
                           >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M14 5l7 7m0 0l-7 7m7-7H3"
+                            />
                           </svg>
                         </div>
                       )}

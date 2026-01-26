@@ -1,7 +1,5 @@
 import cors from "@fastify/cors";
 import Fastify from "fastify";
-import fs from "fs";
-import crypto from "crypto";
 import secureSession from "@fastify/secure-session";
 import payRazorpay from "./plugins/razorpay.js";
 const fastify = Fastify({ logger: true });
@@ -17,7 +15,10 @@ import dbPlugin from "./database/db.js";
 import authSession from "./plugins/authSession.js";
 
 fastify.register(secureSession, {
-  key: crypto.randomBytes(32),
+  key: Buffer.alloc(
+    32,
+    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  ),
   cookie: {
     path: "/",
     httpOnly: true,
@@ -26,8 +27,8 @@ fastify.register(secureSession, {
   },
 });
 
-fastify.register(authSession);
 fastify.register(dbPlugin);
+fastify.register(authSession);
 fastify.register(payRazorpay);
 
 fastify.register(userRoutes, {

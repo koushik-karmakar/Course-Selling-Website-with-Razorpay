@@ -2,12 +2,14 @@ import { createOrder } from "../controller/payment.controller.js";
 import {
   registerUser,
   loginUser,
+  logoutUser,
   verifyUser,
 } from "../controller/user.controller.js";
 
 const userRoutes = async (fastify) => {
   fastify.post("/register", registerUser);
   fastify.post("/login", loginUser);
+  fastify.post("/logout", logoutUser);
   fastify.get("/me", { preHandler: fastify.requireLogin }, verifyUser);
 };
 

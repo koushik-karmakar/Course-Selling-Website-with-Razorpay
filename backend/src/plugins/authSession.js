@@ -8,7 +8,7 @@ const authSession = async (fastify) => {
         message: "Login required",
       });
     }
-    request.user = user;
+    return (request.user = user);
   });
 };
 export default fp(authSession);

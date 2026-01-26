@@ -85,7 +85,10 @@ const SignIn = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const result = await login(formData.email, formData.password);
+      const result = await login(
+        formData.email.trim().toLowerCase(),
+        formData.password.trim(),
+      );
 
       if (result.success) {
         showAlert({

@@ -14,6 +14,7 @@ import {
   Phone,
   MapPin,
   ChevronRight,
+  CreditCard as StripeIcon,
 } from "lucide-react";
 import { coursesData } from "../data/coursesData.jsx";
 import { useAlert } from "../components/Alert.jsx";
@@ -27,7 +28,7 @@ const CheckoutPage = () => {
   const course = coursesData.find((c) => c.url === slug);
   const getUser = localStorage.getItem("code-master-user");
   const user = getUser ? JSON.parse(getUser) : null;
-  
+
   const [formData, setFormData] = useState({
     firstName: user.firstName,
     lastName: user.lastName,
@@ -37,7 +38,7 @@ const CheckoutPage = () => {
     country: "India",
   });
 
-  const [selectedPayment, setSelectedPayment] = useState("upi");
+  const [selectedPayment, setSelectedPayment] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -56,6 +57,21 @@ const CheckoutPage = () => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
 
+  const isFormComplete = () => {
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "address",
+    ];
+    return requiredFields.every(
+      (field) => formData[field] && formData[field].trim() !== "",
+    );
+  };
+
+  const isPaymentButtonDisabled =
+    isLoading || !selectedPayment || !isFormComplete();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -84,13 +100,19 @@ const CheckoutPage = () => {
   };
 
   const handlePayment = async () => {
-    const requiredFields = ["firstName", "lastName", "email", "phone"];
-    const missingFields = requiredFields.filter((field) => !formData[field]);
-
-    if (missingFields.length > 0) {
+    if (!selectedPayment) {
       showAlert({
         type: "error",
-        title: "Missing Information",
+        title: "Payment Method Required",
+        message: "Please select a payment method before proceeding.",
+      });
+      return;
+    }
+
+    if (!isFormComplete()) {
+      showAlert({
+        type: "error",
+        title: "Incomplete Information",
         message: "Please fill in all required fields before proceeding.",
       });
       return;
@@ -99,92 +121,33 @@ const CheckoutPage = () => {
     setIsLoading(true);
 
     if (selectedPayment === "razorpay") {
-      await handleRazorpayPayment();
-    } else if (selectedPayment === "upi") {
-      await handleRazorpayPayment();
+      await handleRazorPayment();
+    } else if (selectedPayment === "stripe") {
+      showAlert({
+        type: "info",
+        title: "Coming Soon",
+        message: "Stripe payment integration is currently under development.",
+      });
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
-  const handleRazorpayPayment = async () => {
-    const load = await loadRazorpay();
-    if (!load) {
+  const handleRazorPayment = async () => {
+    setIsLoading(true);
+    try {
+      navigate(`/payment/${course.url}`, {
+        state: { course: course },
+      });
+    } catch (error) {
       showAlert({
         type: "error",
-        title: "Payment Error",
-        message: "Razorpay SDK failed to load. Please try again.",
+        title: "Enrollment Failed",
+        message:
+          "There was an error processing your enrollment. Please try again.",
       });
-      return;
+    } finally {
+      setIsLoading(false);
     }
-    const backend = import.meta.env.VITE_BACKEND_PORT_LINK;
-    const { data: order } = await axios.post(
-      `${backend}/api/payment/create-order`,
-      {
-        courseId: course?.id,
-      },
-      {
-        withCredentials: true,
-      },
-    );
-
-    const option = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      currency: "INR",
-      amount: total * 100,
-      name: "CodeMaster",
-      description: currentCourse?.title,
-      order_id: order.id,
-
-      prefill: {
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        contact: formData.phone,
-      },
-
-      handler: async (response) => {
-        await axios.post(
-          `${backend}/api/payment/verify`,
-          {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            courseId: course?.id || courseFromState?.id,
-          },
-          {
-            withCredentials: true,
-          },
-        );
-
-        showAlert({
-          type: "success",
-          title: "Payment Successful!",
-          message: "You are now enrolled in the course.",
-          showRedirect: true,
-          redirectText: "Go to Course",
-          onRedirect: () => {
-            navigate(`/course/${course?.url || courseFromState?.url}/learn`);
-          },
-        });
-      },
-
-      theme: {
-        color: "#6366f1",
-      },
-    };
-
-    const payment = new window.Razorpay(option);
-    payment.open();
-  };
-
-  const loadRazorpay = async () => {
-    if (window.Razorpay) return true;
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
   };
 
   if (!course && !courseFromState) {
@@ -201,7 +164,6 @@ const CheckoutPage = () => {
   return (
     <>
       <AlertComponent />
-
       <div className="min-h-screen bg-linear-to-b from-gray-900 to-gray-950 text-gray-100">
         <header className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800">
           <div className="container mx-auto px-4 py-4">
@@ -285,6 +247,7 @@ const CheckoutPage = () => {
                           First Name *
                         </label>
                         <input
+                          readOnly
                           type="text"
                           name="firstName"
                           value={formData.firstName}
@@ -300,6 +263,7 @@ const CheckoutPage = () => {
                           Last Name *
                         </label>
                         <input
+                          readOnly
                           type="text"
                           name="lastName"
                           value={formData.lastName}
@@ -318,6 +282,7 @@ const CheckoutPage = () => {
                       <div className="relative">
                         <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
                         <input
+                          readOnly
                           type="email"
                           name="email"
                           value={formData.email}
@@ -328,7 +293,6 @@ const CheckoutPage = () => {
                         />
                       </div>
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
                         Phone Number *
@@ -336,6 +300,7 @@ const CheckoutPage = () => {
                       <div className="relative">
                         <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
                         <input
+                          readOnly
                           type="tel"
                           name="phone"
                           value={formData.phone}
@@ -349,7 +314,7 @@ const CheckoutPage = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Address
+                        Address *
                       </label>
                       <div className="relative">
                         <MapPin className="absolute left-4 top-4 w-5 h-5 text-gray-500" />
@@ -360,6 +325,7 @@ const CheckoutPage = () => {
                           className="w-full pl-12 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                           rows="3"
                           placeholder="Street Address"
+                          required
                         />
                       </div>
                     </div>
@@ -374,38 +340,6 @@ const CheckoutPage = () => {
                   <div className="space-y-4">
                     <div
                       className={`border rounded-xl p-4 cursor-pointer transition-all ${
-                        selectedPayment === "upi"
-                          ? "border-blue-500 bg-blue-500/10"
-                          : "border-gray-700 hover:border-gray-600"
-                      }`}
-                      onClick={() => setSelectedPayment("upi")}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 rounded-lg bg-linear-to-r from-green-500 to-emerald-600 flex items-center justify-center">
-                            <Smartphone className="w-6 h-6 text-white" />
-                          </div>
-                          <div>
-                            <h3 className="font-bold">UPI Payment</h3>
-                            <p className="text-gray-400 text-sm">
-                              Pay instantly with any UPI app
-                            </p>
-                          </div>
-                        </div>
-                        <div
-                          className={`w-5 h-5 rounded-full border-2 ${selectedPayment === "upi" ? "border-blue-500 bg-blue-500" : "border-gray-600"}`}
-                        >
-                          {selectedPayment === "upi" && (
-                            <div className="w-full h-full rounded-full bg-blue-500 flex items-center justify-center">
-                              <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div
-                      className={`border rounded-xl p-4 cursor-pointer transition-all ${
                         selectedPayment === "razorpay"
                           ? "border-blue-500 bg-blue-500/10"
                           : "border-gray-700 hover:border-gray-600"
@@ -418,9 +352,9 @@ const CheckoutPage = () => {
                             <CreditCard className="w-6 h-6 text-white" />
                           </div>
                           <div>
-                            <h3 className="font-bold">Credit/Debit Card</h3>
+                            <h3 className="font-bold">Razorpay</h3>
                             <p className="text-gray-400 text-sm">
-                              Pay with Visa, Mastercard, or RuPay
+                              Credit/Debit Cards, UPI, Net Banking
                             </p>
                           </div>
                         </div>
@@ -436,67 +370,76 @@ const CheckoutPage = () => {
                       </div>
 
                       {selectedPayment === "razorpay" && (
-                        <div className="mt-4 pt-4 border-t border-gray-700 space-y-4">
-                          <div className="grid md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Card Number
-                              </label>
-                              <input
-                                type="text"
-                                className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                placeholder="1234 5678 9012 3456"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Expiry Date
-                              </label>
-                              <input
-                                type="text"
-                                className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                placeholder="MM/YY"
-                              />
-                            </div>
-                          </div>
-                          <div className="grid md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Cardholder Name
-                              </label>
-                              <input
-                                type="text"
-                                className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                placeholder="John Doe"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-300 mb-2">
-                                CVV
-                              </label>
-                              <input
-                                type="text"
-                                className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                placeholder="123"
-                              />
-                            </div>
+                        <div className="mt-4 pt-4 border-t border-gray-700">
+                          <p className="text-sm text-gray-300 mb-3">
+                            You'll be redirected to Razorpay's secure payment
+                            gateway to complete your purchase.
+                          </p>
+                          <div className="flex items-center space-x-2 text-sm text-blue-400">
+                            <Shield className="w-4 h-4" />
+                            <span>
+                              Secure payment with 256-bit SSL encryption
+                            </span>
                           </div>
                         </div>
                       )}
                     </div>
 
-                    <div className="border border-gray-700 rounded-xl p-4 opacity-50 cursor-not-allowed">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 rounded-lg bg-gray-700 flex items-center justify-center">
-                          <Globe className="w-6 h-6 text-gray-500" />
+                    <div
+                      className="border border-gray-700 rounded-xl p-4 opacity-50 cursor-not-allowed"
+                      title="Coming soon"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 rounded-lg bg-gray-700 flex items-center justify-center">
+                            <StripeIcon className="w-6 h-6 text-gray-500" />
+                          </div>
+                          <div>
+                            <h3 className="font-bold">Stripe</h3>
+                            <p className="text-gray-400 text-sm">
+                              International cards and payments
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-bold">Net Banking</h3>
-                          <p className="text-gray-400 text-sm">Coming Soon</p>
-                        </div>
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-600"></div>
+                      </div>
+                      <div className="mt-2">
+                        <span className="text-xs px-2 py-1 bg-gray-700 text-gray-400 rounded">
+                          Coming Soon
+                        </span>
                       </div>
                     </div>
                   </div>
+
+                  {!isFormComplete() && (
+                    <div className="mt-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                      <div className="flex items-start space-x-3">
+                        <div className="w-5 h-5 text-amber-400 mt-0.5">
+                          <svg
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-sm text-amber-300 font-medium">
+                            Complete all required fields
+                          </p>
+                          <p className="text-xs text-amber-400 mt-1">
+                            Please fill in your address and ensure all fields
+                            are completed to proceed with payment.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -583,7 +526,7 @@ const CheckoutPage = () => {
 
                       <button
                         onClick={handlePayment}
-                        disabled={isLoading}
+                        disabled={isPaymentButtonDisabled}
                         className="cursor-pointer w-full py-4 rounded-xl bg-linear-to-r from-blue-500 to-purple-600 text-white font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none flex items-center justify-center space-x-2"
                       >
                         {isLoading ? (
@@ -591,6 +534,10 @@ const CheckoutPage = () => {
                             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                             <span>Processing...</span>
                           </>
+                        ) : !selectedPayment ? (
+                          "Select Payment Method"
+                        ) : !isFormComplete() ? (
+                          "Complete All Fields"
                         ) : (
                           <>
                             <span>Complete Purchase</span>
