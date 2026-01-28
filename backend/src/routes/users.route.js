@@ -1,4 +1,4 @@
-import { createOrder } from "../controller/payment.controller.js";
+import { createOrder, verifyPayment } from "../controller/payment.controller.js";
 import {
   registerUser,
   loginUser,
@@ -20,6 +20,13 @@ const paymentRoute = async (fastify) => {
       preHandler: fastify.requireLogin,
     },
     createOrder,
+  );
+  fastify.post(
+    "/verify",
+    {
+      preHandler: fastify.requireLogin,
+    },
+    verifyPayment,
   );
 };
 

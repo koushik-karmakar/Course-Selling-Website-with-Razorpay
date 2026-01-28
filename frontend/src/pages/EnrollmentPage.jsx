@@ -125,7 +125,7 @@ const EnrollmentPage = () => {
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <button
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/")}
                 className="cursor-pointer flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -226,11 +226,10 @@ const EnrollmentPage = () => {
                       <button
                         key={section}
                         onClick={() => setSelectedSection(section)}
-                        className={`flex-1 py-3 px-4 rounded-lg font-medium capitalize transition-all ${
-                          selectedSection === section
-                            ? "bg-linear-to-r from-blue-500 to-purple-600 text-white"
-                            : "text-gray-400 hover:text-white"
-                        }`}
+                        className={`flex-1 py-3 px-4 rounded-lg font-medium capitalize transition-all ${selectedSection === section
+                          ? "bg-linear-to-r from-blue-500 to-purple-600 text-white"
+                          : "text-gray-400 hover:text-white"
+                          }`}
                       >
                         {section}
                       </button>

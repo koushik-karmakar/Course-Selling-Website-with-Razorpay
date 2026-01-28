@@ -56,7 +56,7 @@ const CheckoutPage = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
-
+  console.log(currentCourse.id);
   const isFormComplete = () => {
     const requiredFields = [
       "firstName",
@@ -136,8 +136,9 @@ const CheckoutPage = () => {
     setIsLoading(true);
     try {
       navigate(`/payment/${course.url}`, {
-        state: { course: course },
+        state: { courseId: currentCourse.id, courseTitle: course.title, amount: total },
       });
+
     } catch (error) {
       showAlert({
         type: "error",
@@ -339,11 +340,10 @@ const CheckoutPage = () => {
 
                   <div className="space-y-4">
                     <div
-                      className={`border rounded-xl p-4 cursor-pointer transition-all ${
-                        selectedPayment === "razorpay"
-                          ? "border-blue-500 bg-blue-500/10"
-                          : "border-gray-700 hover:border-gray-600"
-                      }`}
+                      className={`border rounded-xl p-4 cursor-pointer transition-all ${selectedPayment === "razorpay"
+                        ? "border-blue-500 bg-blue-500/10"
+                        : "border-gray-700 hover:border-gray-600"
+                        }`}
                       onClick={() => setSelectedPayment("razorpay")}
                     >
                       <div className="flex items-center justify-between">
