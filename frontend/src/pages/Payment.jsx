@@ -164,7 +164,7 @@ const PaymentPage = () => {
         message,
       });
       console.log("Failed to start payment.");
-      // navigate(`/course/${slug}`, { replace: true });
+      navigate(`/course/${slug}`, { replace: true });
     }
   };
 

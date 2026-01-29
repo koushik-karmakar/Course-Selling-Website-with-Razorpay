@@ -206,70 +206,95 @@ const Navbar = () => {
             </div>
 
             {isOpen && (
-              <div className="md:hidden py-4 border-t dark:border-gray-800 border-gray-200">
-                <div className="flex flex-col space-y-4">
-                  {navItems.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className="dark:text-gray-300 text-gray-700 hover:text-blue-500 dark:hover:text-blue-400 transition-colors font-medium py-2"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.name}
-                    </a>
-                  ))}
+              <div className="md:hidden bg-gray-800/95 dark:bg-gray-900/95 backdrop-blur-lg border-t dark:border-gray-800 border-gray-200 mt-1 rounded-b-xl shadow-2xl">
+                <div className="px-4 py-3">
+                  <div className="space-y-2">
+                    {navItems.map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        className="block px-3 py-2.5 rounded-lg dark:text-gray-300 text-gray-700 hover:text-blue-500 dark:hover:text-blue-400 hover:dark:bg-gray-800 hover:bg-gray-100 transition-colors font-medium"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {item.name}
+                      </a>
+                    ))}
+                  </div>
 
-                  <div className="pt-4 space-y-3">
+                  <div className="mt-4 pt-4 border-t dark:border-gray-800 border-gray-200">
                     {!user ? (
                       <Link
                         to="/signin"
-                        className="cursor-pointer w-full py-2 text-center rounded-lg font-medium border dark:border-gray-700 border-gray-300 dark:text-gray-300 text-gray-700 hover:border-blue-500 hover:text-blue-500 transition-colors"
+                        className="block w-full px-3 py-2.5 text-center rounded-lg font-medium border dark:border-gray-700 border-gray-300 dark:text-gray-300 text-gray-700 hover:border-blue-500 hover:text-blue-500 transition-colors mb-3"
                         onClick={() => setIsOpen(false)}
                       >
                         Sign In
                       </Link>
                     ) : (
                       <>
-                        <div className="px-3 py-2 border dark:border-gray-700 border-gray-300 rounded-lg">
-                          <p className="font-semibold dark:text-white text-gray-800">
-                            {user.firstName} {user.lastName}
-                          </p>
-                          <p className="text-sm dark:text-gray-400 text-gray-600">
-                            {user.email}
-                          </p>
+                        <div className="flex items-center space-x-3 px-3 py-2.5 mb-3 rounded-lg dark:bg-gray-800/50 bg-gray-100/50">
+                          <div className="w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                            {getUserInitials()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold dark:text-white text-gray-800 text-sm truncate">
+                              {user.firstName} {user.lastName}
+                            </p>
+                            <p className="text-xs dark:text-gray-400 text-gray-600 truncate">
+                              {user.email}
+                            </p>
+                          </div>
                         </div>
 
-                        <Link
-                          to="/profile"
-                          className="cursor-pointer w-full py-2 text-center rounded-lg font-medium border dark:border-gray-700 border-gray-300 dark:text-gray-300 text-gray-700"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          My Profile
-                        </Link>
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          <Link
+                            to="/profile"
+                            className="flex flex-col items-center justify-center px-3 py-2.5 rounded-lg border dark:border-gray-700 border-gray-300 dark:text-gray-300 text-gray-700 hover:border-blue-500 hover:text-blue-500 transition-colors"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            <User className="w-4 h-4 mb-1" />
+                            <span className="text-xs font-medium">Profile</span>
+                          </Link>
 
-                        <Link
-                          to="/my-courses"
-                          className="cursor-pointer w-full py-2 text-center rounded-lg font-medium border dark:border-gray-700 border-gray-300 dark:text-gray-300 text-gray-700"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          My Courses
-                        </Link>
+                          <Link
+                            to="/my-courses"
+                            className="flex flex-col items-center justify-center px-3 py-2.5 rounded-lg border dark:border-gray-700 border-gray-300 dark:text-gray-300 text-gray-700 hover:border-blue-500 hover:text-blue-500 transition-colors"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            <BookOpen className="w-4 h-4 mb-1" />
+                            <span className="text-xs font-medium">Courses</span>
+                          </Link>
+                        </div>
 
-                        <button
-                          onClick={() => {
-                            logout();
-                            setIsOpen(false);
-                          }}
-                          className="cursor-pointer w-full py-2 rounded-lg font-medium bg-linear-to-r from-rose-500 to-rose-600 text-white"
-                        >
-                          Logout
-                        </button>
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          <Link
+                            to="/settings"
+                            className="flex flex-col items-center justify-center px-3 py-2.5 rounded-lg border dark:border-gray-700 border-gray-300 dark:text-gray-300 text-gray-700 hover:border-blue-500 hover:text-blue-500 transition-colors"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            <Settings className="w-4 h-4 mb-1" />
+                            <span className="text-xs font-medium">
+                              Settings
+                            </span>
+                          </Link>
+
+                          <button
+                            onClick={() => {
+                              logout();
+                              setIsOpen(false);
+                            }}
+                            className="flex flex-col items-center justify-center px-3 py-2.5 rounded-lg bg-linear-to-r from-rose-500 to-rose-600 text-white hover:from-rose-600 hover:to-rose-700 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4 mb-1" />
+                            <span className="text-xs font-medium">Logout</span>
+                          </button>
+                        </div>
                       </>
                     )}
 
                     <a
                       href="#courses"
-                      className="cursor-pointer w-full py-2 text-center rounded-lg font-medium bg-linear-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 transition-all"
+                      className="block w-full px-3 py-3 text-center rounded-lg font-medium bg-linear-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg"
                       onClick={() => setIsOpen(false)}
                     >
                       Start Learning
