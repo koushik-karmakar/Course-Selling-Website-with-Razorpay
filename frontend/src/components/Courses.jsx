@@ -40,6 +40,7 @@ const Courses = () => {
   useEffect(() => {
     fetchCourses();
   }, []);
+
   return (
     <section id="courses" className="pt-20">
       <div className="container mx-auto px-4">
@@ -147,16 +148,21 @@ const Courses = () => {
                       : navigate(`/course/${course.url}`)
                   }
                   className={`cursor-pointer w-full py-3 rounded-xl font-semibold transition-all
-    ${
-      purchasedCourseIds.includes(course.id)
-        ? "bg-green-600 hover:bg-green-700 text-white"
-        : "bg-linear-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700"
-    }
-  `}
+                        ${
+                          purchasedCourseIds.includes(course.id)
+                            ? "bg-green-600 hover:bg-green-700 text-white"
+                            : "bg-linear-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700"
+                        }
+                      `}
                 >
-                  {purchasedCourseIds.includes(course.id)
-                    ? "▶ Watch"
-                    : "Enroll Now"}
+                  {purchasedCourseIds.includes(course.id) ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Play className="w-4 h-4" />
+                      <span>Watch</span>
+                    </span>
+                  ) : (
+                    "Enroll Now"
+                  )}
                 </button>
               </div>
             </div>
