@@ -1,9 +1,13 @@
-import { createOrder, verifyPayment } from "../controller/payment.controller.js";
+import {
+  createOrder,
+  verifyPayment,
+} from "../controller/payment.controller.js";
 import {
   registerUser,
   loginUser,
   logoutUser,
   verifyUser,
+  verifyPurchasedCourse,
 } from "../controller/user.controller.js";
 
 const userRoutes = async (fastify) => {
@@ -11,6 +15,13 @@ const userRoutes = async (fastify) => {
   fastify.post("/login", loginUser);
   fastify.post("/logout", logoutUser);
   fastify.get("/me", { preHandler: fastify.requireLogin }, verifyUser);
+  fastify.get(
+    "/verify_buy_course",
+    {
+      preHandler: fastify.requireLogin,
+    },
+    verifyPurchasedCourse,
+  );
 };
 
 const paymentRoute = async (fastify) => {
@@ -21,6 +32,7 @@ const paymentRoute = async (fastify) => {
     },
     createOrder,
   );
+
   fastify.post(
     "/verify",
     {

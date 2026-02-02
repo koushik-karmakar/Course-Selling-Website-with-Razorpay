@@ -7,7 +7,8 @@ export const coursesData = [
     price: "₹1,999",
     originalPrice: "₹4,999",
     duration: "40 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.9,
     students: 2450,
     tags: ["Beginner Friendly", "Project-based"],
@@ -115,7 +116,8 @@ export const coursesData = [
     price: "₹2,499",
     originalPrice: "₹5,999",
     duration: "50 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.8,
     students: 1890,
     tags: ["Advanced", "Hooks"],
@@ -223,7 +225,8 @@ export const coursesData = [
     price: "₹3,999",
     originalPrice: "₹8,999",
     duration: "80 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.9,
     students: 1560,
     tags: ["Complete Package", "Job-ready"],
@@ -331,7 +334,8 @@ export const coursesData = [
     price: "₹2,999",
     originalPrice: "₹6,499",
     duration: "45 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.7,
     students: 2100,
     tags: ["Backend", "APIs"],
@@ -439,7 +443,8 @@ export const coursesData = [
     price: "₹2,999",
     originalPrice: "₹6,999",
     duration: "55 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.8,
     students: 3200,
     tags: ["Data Science", "ML"],
@@ -547,7 +552,8 @@ export const coursesData = [
     price: "₹3,499",
     originalPrice: "₹7,999",
     duration: "60 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.7,
     students: 1780,
     tags: ["Cross-platform", "Mobile"],
@@ -655,7 +661,8 @@ export const coursesData = [
     price: "₹2,299",
     originalPrice: "₹5,499",
     duration: "35 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.9,
     students: 1950,
     tags: ["Design", "Figma"],
@@ -763,7 +770,8 @@ export const coursesData = [
     price: "₹4,499",
     originalPrice: "₹9,999",
     duration: "65 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.8,
     students: 1250,
     tags: ["Cloud", "DevOps"],
@@ -871,7 +879,8 @@ export const coursesData = [
     price: "₹1,799",
     originalPrice: "₹4,299",
     duration: "30 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.9,
     students: 2100,
     tags: ["Type Safety", "Advanced"],
@@ -979,7 +988,8 @@ export const coursesData = [
     price: "₹2,199",
     originalPrice: "₹5,299",
     duration: "25 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.6,
     students: 1450,
     tags: ["API", "GraphQL"],
@@ -1087,7 +1097,8 @@ export const coursesData = [
     price: "₹5,999",
     originalPrice: "₹12,999",
     duration: "70 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.7,
     students: 980,
     tags: ["Blockchain", "Web3"],
@@ -1195,7 +1206,8 @@ export const coursesData = [
     price: "₹3,299",
     originalPrice: "₹7,499",
     duration: "40 hours",
-
+    thumbnail:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
     rating: 4.9,
     students: 2300,
     tags: ["Interview", "Scalability"],

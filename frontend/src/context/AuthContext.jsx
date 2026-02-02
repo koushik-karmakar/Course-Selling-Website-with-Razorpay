@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
         "code-master-user",
         JSON.stringify(response.data.user),
       );
-      setUser(response.data.user);
+      // setUser(response.data.user);
       return { success: true, user: response.data.user };
     } catch (error) {
       return {

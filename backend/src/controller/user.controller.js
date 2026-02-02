@@ -89,4 +89,32 @@ const logoutUser = async (request, reply) => {
     message: "Logged out successfully",
   });
 };
-export { registerUser, loginUser, verifyUser, logoutUser };
+
+const verifyPurchasedCourse = async (request, reply) => {
+  try {
+    const user = request.user;
+
+    if (!user) {
+      throw new ApiErrorHandle(400, "User not found");
+    }
+
+    const { rows } = await request.server.db.query(
+      "SELECT course_id FROM payments WHERE user_id = $1 AND status = 'SUCCESS'",
+      [user.id],
+    );
+
+    const purchasedCourseIds = rows.map((row) => row.course_id);
+
+    return reply.code(200).send({
+      success: true,
+      courseIds: purchasedCourseIds,
+      total: purchasedCourseIds.length,
+    });
+  } catch (error) {
+    return reply.code(error.statusCode || 500).send({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
+export { registerUser, loginUser, verifyUser, logoutUser, verifyPurchasedCourse };

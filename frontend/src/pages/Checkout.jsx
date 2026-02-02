@@ -56,7 +56,7 @@ const CheckoutPage = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
-  console.log(currentCourse.id);
+ 
   const isFormComplete = () => {
     const requiredFields = [
       "firstName",
