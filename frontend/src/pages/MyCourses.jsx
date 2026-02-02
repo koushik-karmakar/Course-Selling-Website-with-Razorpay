@@ -142,8 +142,8 @@ const MyCourses = () => {
     navigate(`/course/${courseId}`);
   };
 
-  const handleContinueLearning = (courseId) => {
-    navigate(`/learn/${courseId}`);
+  const handleContinueLearning = (courseTitle) => {
+    navigate(`/learn/${courseTitle}`);
   };
 
   const handleBuyCourse = (courseId) => {
@@ -544,7 +544,7 @@ const MyCourses = () => {
 
                       <div className="flex flex-col gap-2">
                         <button
-                          onClick={() => handleContinueLearning(course.id)}
+                          onClick={() => handleContinueLearning(course.url)}
                           className="cursor-pointer w-full py-2.5 rounded-xl bg-linear-to-r from-blue-500 to-purple-600 text-white font-semibold hover:from-blue-600 hover:to-purple-700 transition-all flex items-center justify-center group text-sm"
                         >
                           <FiPlay className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
