@@ -144,7 +144,7 @@ const Courses = () => {
                 <button
                   onClick={() =>
                     purchasedCourseIds.includes(course.id)
-                      ? navigate(`/course/${course.url}/watch`)
+                      ? navigate(`/my-courses`)
                       : navigate(`/course/${course.url}`)
                   }
                   className={`cursor-pointer w-full py-3 rounded-xl font-semibold transition-all
