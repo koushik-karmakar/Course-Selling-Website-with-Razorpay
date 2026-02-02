@@ -248,7 +248,7 @@ const EnrollmentPage = () => {
                       <button
                         key={section}
                         onClick={() => setSelectedSection(section)}
-                        className={`flex-1 min-w-[80px] py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium capitalize transition-all text-sm sm:text-base ${
+                        className={`flex-1 min-w-20 py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium capitalize transition-all text-sm sm:text-base ${
                           selectedSection === section
                             ? "bg-linear-to-r from-blue-500 to-purple-600 text-white"
                             : "text-gray-400 hover:text-white"
