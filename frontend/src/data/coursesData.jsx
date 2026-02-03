@@ -8,7 +8,7 @@ export const coursesData = [
     originalPrice: "₹4,999",
     duration: "40 hours",
     thumbnail:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
+      "https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&w=1280&q=80",
     rating: 4.9,
     students: 2450,
     tags: ["Beginner Friendly", "Project-based"],
@@ -117,7 +117,7 @@ export const coursesData = [
     originalPrice: "₹5,999",
     duration: "50 hours",
     thumbnail:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
+      "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=1280&q=80",
     rating: 4.8,
     students: 1890,
     tags: ["Advanced", "Hooks"],
@@ -226,7 +226,7 @@ export const coursesData = [
     originalPrice: "₹8,999",
     duration: "80 hours",
     thumbnail:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
+      "https://images.unsplash.com/photo-1517433456452-f9633a875f6f?auto=format&fit=crop&w=1280&q=80",
     rating: 4.9,
     students: 1560,
     tags: ["Complete Package", "Job-ready"],
@@ -335,7 +335,7 @@ export const coursesData = [
     originalPrice: "₹6,499",
     duration: "45 hours",
     thumbnail:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
+      "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1280&q=80",
     rating: 4.7,
     students: 2100,
     tags: ["Backend", "APIs"],
@@ -444,7 +444,7 @@ export const coursesData = [
     originalPrice: "₹6,999",
     duration: "55 hours",
     thumbnail:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1280&q=80",
     rating: 4.8,
     students: 3200,
     tags: ["Data Science", "ML"],
@@ -553,7 +553,7 @@ export const coursesData = [
     originalPrice: "₹7,999",
     duration: "60 hours",
     thumbnail:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
+      "https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=1280&q=80",
     rating: 4.7,
     students: 1780,
     tags: ["Cross-platform", "Mobile"],
@@ -662,7 +662,7 @@ export const coursesData = [
     originalPrice: "₹5,499",
     duration: "35 hours",
     thumbnail:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
+      "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1280&q=80",
     rating: 4.9,
     students: 1950,
     tags: ["Design", "Figma"],
@@ -880,7 +880,7 @@ export const coursesData = [
     originalPrice: "₹4,299",
     duration: "30 hours",
     thumbnail:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
+      "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?auto=format&fit=crop&w=1280&q=80",
     rating: 4.9,
     students: 2100,
     tags: ["Type Safety", "Advanced"],
@@ -989,7 +989,7 @@ export const coursesData = [
     originalPrice: "₹5,299",
     duration: "25 hours",
     thumbnail:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
+      "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1280&q=80",
     rating: 4.6,
     students: 1450,
     tags: ["API", "GraphQL"],
@@ -1098,7 +1098,7 @@ export const coursesData = [
     originalPrice: "₹12,999",
     duration: "70 hours",
     thumbnail:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
+      "https://images.unsplash.com/photo-1640161704729-cbe966a08476?auto=format&fit=crop&w=1280&q=80",
     rating: 4.7,
     students: 980,
     tags: ["Blockchain", "Web3"],
@@ -1207,7 +1207,7 @@ export const coursesData = [
     originalPrice: "₹7,499",
     duration: "40 hours",
     thumbnail:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80",
+      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1280&q=80",
     rating: 4.9,
     students: 2300,
     tags: ["Interview", "Scalability"],

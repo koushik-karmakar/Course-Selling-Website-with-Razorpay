@@ -168,20 +168,29 @@ const EnrollmentPage = () => {
             <div className="lg:col-span-2">
               <div className="relative rounded-xl overflow-hidden bg-black mb-6">
                 <div className="relative aspect-video bg-linear-to-br from-gray-900 to-black">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center px-4">
-                      <div className="relative">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-fullbg-linear-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 flex items-center justify-center">
-                          <Lock className="w-8 h-8 sm:w-10 sm:h-10 text-blue-400" />
+                  <div className="absolute inset-0">
+                    <div className="absolute inset-0">
+                      <img
+                        src={course.thumbnail}
+                        alt={course.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/5"></div>
+                    </div>
+                    <div className="absolute inset-0 bg-black/5 backdrop-blur-sm flex items-center justify-center">
+                      <div className="text-center px-4">
+                        <div className="relative">
+                          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-full bg-linear-to-r from-blue-500/40 to-purple-500/40 border border-blue-500/50 flex items-center justify-center backdrop-blur-sm">
+                            <Lock className="w-8 h-8 sm:w-10 sm:h-10 text-blue-300" />
+                          </div>
+                          <div className="absolute inset-0 animate-ping rounded-full bg-blue-500/30"></div>
                         </div>
-                        <div className="absolute inset-0 animate-ping rounded-full bg-blue-500/20"></div>
+                        <p className="text-white text-sm sm:text-base mt-4 font-medium drop-shadow-lg">
+                          Preview available after purchase
+                        </p>
                       </div>
-                      <p className="text-gray-300 text-sm sm:text-base">
-                        Preview available after purchase
-                      </p>
                     </div>
                   </div>
-
                   <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent">
                     <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6">
                       <div className="px-3 py-2 sm:px-4 sm:py-2 bg-black/60 backdrop-blur-sm rounded-lg">
@@ -192,7 +201,6 @@ const EnrollmentPage = () => {
                     </div>
                   </div>
                 </div>
-
                 <div className="absolute inset-0 flex items-center justify-center">
                   <button
                     disabled
@@ -202,7 +210,6 @@ const EnrollmentPage = () => {
                   </button>
                 </div>
               </div>
-
               <div className="hidden md:grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <div className="bg-gray-800/50 rounded-lg p-4 text-center">
                   <div className="flex items-center justify-center space-x-2 mb-2">

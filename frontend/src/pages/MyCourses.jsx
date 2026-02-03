@@ -132,11 +132,6 @@ const MyCourses = () => {
   useEffect(() => {
     fetchCourses();
   }, []);
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   }, 500);
-  // }, []);
 
   const handleCourseClick = (courseId) => {
     navigate(`/course/${courseId}`);
