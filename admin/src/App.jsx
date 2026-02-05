@@ -151,7 +151,7 @@ function App() {
                 <button
                   key={item.id}
                   onClick={() => setActiveMenu(item.id)}
-                  className={`
+                  className={` cursor-pointer
                     flex items-center space-x-3 w-full px-4 py-3 rounded-lg 
                     transition-all duration-200
                     ${
@@ -190,7 +190,7 @@ function App() {
                   {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-linear-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-linear-to-r rounded-lg flex items-center justify-center">
                     <img
                       src="https://res.cloudinary.com/db7qmdfr2/image/upload/v1768744832/9ae17728-89d8-4828-97f0-beb33573fe8c_lmfdkx.png"
                       alt="CodeMaster Logo"

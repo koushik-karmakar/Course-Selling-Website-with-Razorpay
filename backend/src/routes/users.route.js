@@ -9,6 +9,7 @@ import {
   verifyUser,
   verifyPurchasedCourse,
 } from "../controller/user.controller.js";
+import { uploadVideo } from "../controller/video.controller.js";
 
 const userRoutes = async (fastify) => {
   fastify.post("/register", registerUser);
@@ -42,4 +43,7 @@ const paymentRoute = async (fastify) => {
   );
 };
 
-export { userRoutes, paymentRoute };
+const videoRoute = async (fastify) => {
+  fastify.post("/upload", { preHandler: fastify.requireLogin }, uploadVideo);
+};
+export { userRoutes, paymentRoute, videoRoute };
