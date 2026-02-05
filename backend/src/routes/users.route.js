@@ -44,6 +44,6 @@ const paymentRoute = async (fastify) => {
 };
 
 const videoRoute = async (fastify) => {
-  fastify.post("/upload", { preHandler: fastify.requireLogin }, uploadVideo);
+  fastify.post("/upload", uploadVideo);
 };
 export { userRoutes, paymentRoute, videoRoute };

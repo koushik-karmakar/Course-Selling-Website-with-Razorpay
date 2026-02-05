@@ -9,8 +9,8 @@ const BUCKET = "code.master.app.bucket";
 const s3 = new S3Client({
   region: "ap-south-1",
   credentials: {
-    accessKeyId: "",
-    secretAccessKey: "",
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
   },
 });
 
@@ -50,4 +50,17 @@ async function downloadFromS3(key, outputPath) {
     writeStream.on("error", reject);
   });
 }
-export { uploadToS3, downloadFromS3 };
+
+async function streamFile(readStream, filePath) {
+  return new Promise((resolve, reject) => {
+    const writeStream = fs.createWriteStream(filePath);
+
+    readStream.pipe(writeStream);
+
+    writeStream.on("finish", resolve);
+    writeStream.on("error", reject);
+    readStream.on("error", reject);
+  });
+}
+
+export { uploadToS3, downloadFromS3, streamFile };

@@ -2,9 +2,10 @@ import cors from "@fastify/cors";
 import Fastify from "fastify";
 import secureSession from "@fastify/secure-session";
 import payRazorpay from "./plugins/razorpay.js";
+import multipart from "@fastify/multipart";
 const fastify = Fastify({ logger: true });
 await fastify.register(cors, {
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", "http://localhost:5174"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 });
@@ -26,7 +27,11 @@ fastify.register(secureSession, {
     sameSite: "lax",
   },
 });
-
+fastify.register(multipart, {
+  limits: {
+    fileSize: 10 * 1024 * 1024 * 1024,
+  },
+});
 fastify.register(dbPlugin);
 fastify.register(authSession);
 fastify.register(payRazorpay);
