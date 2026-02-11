@@ -14,10 +14,10 @@ const PaymentPage = () => {
   const razorpayInstanceRef = useRef(null);
 
   const paymentData = location.state;
+  console.log(paymentData);
   const courseId = paymentData?.courseId;
   const amount = paymentData?.amount;
   const courseTitle = paymentData?.courseTitle;
-
   useEffect(() => {
     if (!paymentData || !courseId || !amount) {
       showAlert({
@@ -130,6 +130,7 @@ const PaymentPage = () => {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 courseId: courseId,
+                courseTitle,
               },
               { withCredentials: true },
             );

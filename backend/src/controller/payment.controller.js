@@ -127,5 +127,4 @@ const verifyPayment = async (request, reply) => {
   }
 };
 
-
 export { createOrder, verifyPayment };

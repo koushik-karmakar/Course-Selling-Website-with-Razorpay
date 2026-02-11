@@ -1,5 +1,6 @@
 import { ApiErrorHandle } from "../utils/ApiErrorHandler.js";
 import { hashPassword, verifyPassword } from "../utils/password.js";
+import { generateSignedVideoUrl } from "../video_process/generateVideoURL.js";
 const registerUser = async (request, reply) => {
   const { firstName, lastName, email, mobile, password } = request.body;
   if (!firstName || !lastName || !email || !mobile || !password) {
@@ -117,4 +118,48 @@ const verifyPurchasedCourse = async (request, reply) => {
     });
   }
 };
-export { registerUser, loginUser, verifyUser, logoutUser, verifyPurchasedCourse };
+
+const fetch_S3_Url = async (request, reply) => {
+  try {
+    const { courseId, video_url, title } = request.body;
+    const user = request.user;
+    if (!courseId || !video_url || !title || !user) {
+      throw new ApiErrorHandle(400, "User not found" || "Invalid video");
+    }
+    const signed_URL = generateSignedVideoUrl(video_url);
+    if (!signed_URL) {
+      throw new ApiErrorHandle(400, "Fail to get Video");
+    }
+    const { rows } = await request.server.db.query(
+      "SELECT course_id FROM lessons WHERE user_id = $1 AND status = 'CREATED'",
+      [user.id],
+    );
+    if (rows.length === 0) {
+      await request.server.db.query(
+        `INSERT INTO lessons 
+     (course_id, user_id, title, video_key, duration, status)
+     VALUES ($1, $2, $3, $4, $5, $6)`,
+        [courseId, user.id, title, video_url, 0, "CREATED"],
+      );
+    }
+
+    return reply.code(200).send({
+      success: true,
+      signed_URL,
+    });
+  } catch (error) {
+    return reply.code(error.statusCode || 500).send({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
+
+export {
+  registerUser,
+  loginUser,
+  verifyUser,
+  logoutUser,
+  verifyPurchasedCourse,
+  fetch_S3_Url,
+};

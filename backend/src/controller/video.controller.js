@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { convertToHls } from "../video_process/ffmpeg.js";
 import { uploadToS3 } from "../video_process/s3.js";
-
+import { getVideoDurationMs } from "../utils/video_duration.js";
 fs.mkdirSync("uploads", { recursive: true });
 fs.mkdirSync("processed", { recursive: true });
 

@@ -8,6 +8,7 @@ import {
   logoutUser,
   verifyUser,
   verifyPurchasedCourse,
+  fetch_S3_Url,
 } from "../controller/user.controller.js";
 import { uploadVideo } from "../controller/video.controller.js";
 
@@ -22,6 +23,11 @@ const userRoutes = async (fastify) => {
       preHandler: fastify.requireLogin,
     },
     verifyPurchasedCourse,
+  );
+  fastify.post(
+    "/fetch-video-URL",
+    { preHandler: fastify.requireLogin },
+    fetch_S3_Url,
   );
 };
 
