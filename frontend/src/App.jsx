@@ -8,12 +8,13 @@ import CheckoutPage from "./pages/Checkout.jsx";
 import { PaymentPage } from "./pages/Payment.jsx";
 import MyCourses from "./pages/MyCourses.jsx";
 import LearnPage from "./pages/Learn.jsx";
-
+import NotFound from "./pages/NotFound.jsx";
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="*" element={<NotFound />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<Signup />} />

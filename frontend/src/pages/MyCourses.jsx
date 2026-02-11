@@ -25,64 +25,64 @@ const MyCourses = () => {
   const { AlertComponent, showAlert } = useAlert();
   const [purchasedCourses, setPurchasedCourses] = useState([]);
 
-  const [suggestedCourses, setSuggestedCourses] = useState([
-    {
-      id: 4,
-      title: "Full Stack Web Development",
-      instructor: "Michael Chen",
-      thumbnail:
-        "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=225&fit=crop",
-      price: "$89.99",
-      originalPrice: "$129.99",
-      rating: 4.9,
-      students: 2450,
-      duration: "52h",
-      category: "Web Development",
-      discount: 30,
-    },
-    {
-      id: 5,
-      title: "Mobile App Development with Flutter",
-      instructor: "Sarah Williams",
-      thumbnail:
-        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=225&fit=crop",
-      price: "$74.99",
-      originalPrice: "$99.99",
-      rating: 4.8,
-      students: 1870,
-      duration: "38h",
-      category: "Mobile",
-      discount: 25,
-    },
-    {
-      id: 6,
-      title: "AWS Certified Solutions Architect",
-      instructor: "David Lee",
-      thumbnail:
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=225&fit=crop",
-      price: "$99.99",
-      originalPrice: "$149.99",
-      rating: 4.7,
-      students: 3120,
-      duration: "42h",
-      category: "Cloud",
-      discount: 33,
-    },
-    {
-      id: 7,
-      title: "UI/UX Design Fundamentals",
-      instructor: "Emma Wilson",
-      thumbnail:
-        "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=225&fit=crop",
-      price: "$59.99",
-      originalPrice: "$79.99",
-      rating: 4.6,
-      students: 1560,
-      duration: "24h",
-      category: "Design",
-      discount: 25,
-    },
-  ]);
+  // const [suggestedCourses, setSuggestedCourses] = useState([
+  //   {
+  //     id: 4,
+  //     title: "Full Stack Web Development",
+  //     instructor: "Michael Chen",
+  //     thumbnail:
+  //       "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=225&fit=crop",
+  //     price: "$89.99",
+  //     originalPrice: "$129.99",
+  //     rating: 4.9,
+  //     students: 2450,
+  //     duration: "52h",
+  //     category: "Web Development",
+  //     discount: 30,
+  //   },
+  //   {
+  //     id: 5,
+  //     title: "Mobile App Development with Flutter",
+  //     instructor: "Sarah Williams",
+  //     thumbnail:
+  //       "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=225&fit=crop",
+  //     price: "$74.99",
+  //     originalPrice: "$99.99",
+  //     rating: 4.8,
+  //     students: 1870,
+  //     duration: "38h",
+  //     category: "Mobile",
+  //     discount: 25,
+  //   },
+  //   {
+  //     id: 6,
+  //     title: "AWS Certified Solutions Architect",
+  //     instructor: "David Lee",
+  //     thumbnail:
+  //       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=225&fit=crop",
+  //     price: "$99.99",
+  //     originalPrice: "$149.99",
+  //     rating: 4.7,
+  //     students: 3120,
+  //     duration: "42h",
+  //     category: "Cloud",
+  //     discount: 33,
+  //   },
+  //   {
+  //     id: 7,
+  //     title: "UI/UX Design Fundamentals",
+  //     instructor: "Emma Wilson",
+  //     thumbnail:
+  //       "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=225&fit=crop",
+  //     price: "$59.99",
+  //     originalPrice: "$79.99",
+  //     rating: 4.6,
+  //     students: 1560,
+  //     duration: "24h",
+  //     category: "Design",
+  //     discount: 25,
+  //   },
+  // ]);
 
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -287,7 +287,7 @@ const MyCourses = () => {
               </div>
             </div>
           </div>
-          <div className="hidden sm:block bg-gray-800/40 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 mb-10 sm:p-8">
+          {/* <div className="hidden sm:block bg-gray-800/40 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 mb-10 sm:p-8">
             <h3 className="text-xl sm:text-2xl font-bold text-white mb-6">
               Your Learning Statistics
             </h3>
@@ -374,7 +374,7 @@ const MyCourses = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
           {/* <div className="mb-6 sm:mb-8">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
               <div className="flex items-center">
