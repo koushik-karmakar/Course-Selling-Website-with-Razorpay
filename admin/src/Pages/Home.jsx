@@ -803,56 +803,7 @@ function Home() {
                   </table>
                 </div>
 
-                <div className="mt-8 pt-8 border-t border-gray-200">
-                  <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-base font-semibold text-gray-800">
-                      S3 URLs (Click to copy)
-                    </h4>
-                    <span className="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">
-                      Click any URL to copy
-                    </span>
-                  </div>
-                  <div className="space-y-3">
-                    {uploadedFiles.length > 0 ? (
-                      uploadedFiles.map((file) => (
-                        <div
-                          key={file.id}
-                          onClick={() => copyToClipboard(file.path)}
-                          className="flex items-center justify-between p-4 bg-linear-to-r from-gray-50 to-white border border-gray-200 rounded-xl hover:border-blue-300 hover:shadow-md hover:scale-[1.002] transition-all duration-300 cursor-pointer group"
-                        >
-                          <code className="text-sm text-gray-700 font-mono truncate flex-1">
-                            {file.path}
-                          </code>
-                          <div className="flex items-center gap-3">
-                            <div className="hidden group-hover:inline-flex items-center px-3 py-1 bg-linear-to-r from-blue-50 to-purple-50 rounded-lg">
-                              <span className="text-xs font-medium text-gradient bg-linear-to-r from-blue-600 to-purple-600">
-                                Click to copy
-                              </span>
-                            </div>
-                            <Copy
-                              size={16}
-                              className="text-gray-400 group-hover:text-gradient group-hover:bg-linear-to-r group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300"
-                            />
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="flex items-center justify-center p-10 text-center bg-linear-to-r from-gray-50 to-white border border-gray-200 rounded-2xl">
-                        <div className="max-w-md">
-                          <div className="w-16 h-16 bg-linear-to-r from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <Copy className="w-8 h-8 text-gray-300" />
-                          </div>
-                          <p className="text-gray-600 font-medium mb-2">
-                            No URLs available
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Upload a video to generate S3 URLs
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
+               
               </div>
             </div>
           </main>
