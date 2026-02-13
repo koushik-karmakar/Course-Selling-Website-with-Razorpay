@@ -10,7 +10,7 @@ import {
   verifyPurchasedCourse,
   fetch_S3_Url,
 } from "../controller/user.controller.js";
-import { uploadVideo } from "../controller/video.controller.js";
+import { uploadRawVideo } from "../controller/video.controller.js";
 
 const userRoutes = async (fastify) => {
   fastify.post("/register", registerUser);
@@ -50,6 +50,6 @@ const paymentRoute = async (fastify) => {
 };
 
 const videoRoute = async (fastify) => {
-  fastify.post("/upload", uploadVideo);
+  fastify.post("/upload", uploadRawVideo);
 };
 export { userRoutes, paymentRoute, videoRoute };

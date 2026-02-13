@@ -1,98 +1,80 @@
-import fs from "fs";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import path from "path";
-import { convertToHls } from "../video_process/ffmpeg.js";
-import { uploadToS3 } from "../video_process/s3.js";
-import { getVideoDurationMs } from "../utils/video_duration.js";
-fs.mkdirSync("uploads", { recursive: true });
-fs.mkdirSync("processed", { recursive: true });
+import { s3_client } from "../video_process/s3.js";
 
-const uploadVideo = async (request, reply) => {
-  const parts = request.parts();
-
-  let file;
-  let course_id;
-  let title;
-
-  for await (const part of parts) {
-    if (part.type === "file" && part.fieldname === "video") {
-      file = part;
-    } else if (part.type === "field") {
-      if (part.fieldname === "course_id") course_id = part.value;
-      if (part.fieldname === "title") title = part.value;
-    }
-  }
-
-  if (!file || !course_id || !title) {
-    return reply.code(400).send({ error: "Invalid upload data" });
-  }
-
-  const videoId = Date.now();
-  const safeName = path.basename(file.filename);
-  const tempVideoPath = path.join("uploads", `${videoId}-${safeName}`);
-  const outDir = path.join("processed", `${videoId}`);
-
-  const { rowCount } = await request.server.db.query(`SELECT 1 FROM lessons 
-                                    WHERE status = 'processing'
-                                    LIMIT 1`);
-  if (rowCount > 0) {
-    return reply.code(409).send({
-      error: "Another video is processing. Please wait.",
-    });
-  }
-
-  const { rows } = await request.server.db.query(
-    `INSERT INTO lessons (course_id, title, status)
-    VALUES ($1, $2, 'processing')
-    RETURNING id;`,
-    [course_id, title],
-  );
-
-  const lessonId = rows[0].id;
-
+const uploadRawVideo = async (request, reply) => {
   try {
-    await new Promise((resolve, reject) => {
-      const writeStream = fs.createWriteStream(tempVideoPath);
-      file.file.pipe(writeStream);
-      writeStream.on("finish", resolve);
-      writeStream.on("error", reject);
-      file.file.on("error", reject);
+    console.log("Upload request received");
+
+    let fileBuffer;
+    let fileName;
+    let mimeType;
+    let courseId;
+    let title;
+
+    const parts = request.parts();
+
+    for await (const part of parts) {
+      console.log("Processing part:", part.type, part.fieldname);
+
+      if (part.type === "file") {
+        fileName = part.filename;
+        mimeType = part.mimetype;
+        console.log("File found:", fileName, "Type:", mimeType);
+
+        const chunks = [];
+        for await (const chunk of part.file) {
+          chunks.push(chunk);
+        }
+        fileBuffer = Buffer.concat(chunks);
+        console.log("File buffer created, size:", fileBuffer.length, "bytes");
+      } else {
+        if (part.fieldname === "course_id") {
+          courseId = part.value;
+          console.log("Course ID:", courseId);
+        } else if (part.fieldname === "title") {
+          title = part.value;
+          console.log("Title:", title);
+        }
+      }
+    }
+
+    if (!fileBuffer) {
+      console.log("No file found in request");
+      return reply.code(400).send({ error: "No file uploaded" });
+    }
+
+    const key = `raw-videos/${Date.now()}-${path.basename(fileName)}`;
+    console.log("Uploading to S3 with key:", key);
+    console.log("Bucket:", process.env.S3_BUCKET);
+    console.log("Region:", process.env.S3_REGION);
+
+    const command = new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET,
+      Key: key,
+      Body: fileBuffer,
+      ContentType: mimeType,
     });
 
-    const durationMs = await getVideoDurationMs(tempVideoPath);
+    console.log("Starting S3 upload...");
+    const result = await s3_client.send(command);
+    console.log("S3 upload completed:", result);
 
-    await convertToHls(request, tempVideoPath, outDir, lessonId, durationMs);
-
-    const s3Prefix = `courses/course-${course_id}/${lessonId}`;
-    await uploadToS3(outDir, s3Prefix);
-    const videoKey = `${s3Prefix}/master.m3u8`;
-
-    await request.server.db.query(
-      `
-      UPDATE lessons
-      SET video_key = $1, status = 'ready'
-      WHERE id = $2;
-      `,
-      [videoKey, lessonId],
-    );
-
-    reply.send({ success: true, lessonId });
-  } catch (err) {
-    console.error("Video upload failed:", err);
-
-    await request.server.db.query(
-      `
-      UPDATE lessons
-      SET status = 'failed'
-      WHERE id = $1;
-      `,
-      [lessonId],
-    );
-
-    reply.code(500).send({ error: "Video processing failed" });
-  } finally {
-    fs.rmSync(tempVideoPath, { force: true });
-    fs.rmSync(outDir, { recursive: true, force: true });
+    return reply.send({
+      success: true,
+      key,
+      courseId,
+      title,
+    });
+  } catch (error) {
+    console.error("Upload error:", error);
+    console.error("Error stack:", error.stack);
+    return reply.code(500).send({
+      error: "Failed to upload to S3",
+      message: error.message,
+      details: error.stack,
+    });
   }
 };
 
-export { uploadVideo };
+export { uploadRawVideo };

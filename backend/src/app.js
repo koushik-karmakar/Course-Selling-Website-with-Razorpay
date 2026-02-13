@@ -3,7 +3,10 @@ import Fastify from "fastify";
 import secureSession from "@fastify/secure-session";
 import payRazorpay from "./plugins/razorpay.js";
 import multipart from "@fastify/multipart";
+import dotenv from "dotenv";
+dotenv.config();
 const fastify = Fastify({ logger: true });
+/* ===================== CORS ===================== */
 await fastify.register(cors, {
   origin: ["http://localhost:5173", "http://localhost:5174"],
   credentials: true,
@@ -16,10 +19,7 @@ import dbPlugin from "./database/db.js";
 import authSession from "./plugins/authSession.js";
 
 fastify.register(secureSession, {
-  key: Buffer.alloc(
-    32,
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-  ),
+  key: Buffer.alloc(32, process.env.SESSION_SECRET),
   cookie: {
     path: "/",
     httpOnly: true,
@@ -35,7 +35,6 @@ fastify.register(multipart, {
 fastify.register(dbPlugin);
 fastify.register(authSession);
 fastify.register(payRazorpay);
-
 fastify.register(userRoutes, {
   prefix: "/api/users",
 });

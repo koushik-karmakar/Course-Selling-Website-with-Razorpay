@@ -1,6 +1,6 @@
 import fp from "fastify-plugin";
 const authSession = async (fastify) => {
-  fastify.decorate("requireLogin", async (request, reply) => {
+  const reqLogin = async (request, reply) => {
     const user = request.session.get("user");
     if (!user) {
       return reply.code(401).send({
@@ -9,6 +9,8 @@ const authSession = async (fastify) => {
       });
     }
     return (request.user = user);
-  });
+  };
+  
+  fastify.decorate("requireLogin", reqLogin);
 };
 export default fp(authSession);
