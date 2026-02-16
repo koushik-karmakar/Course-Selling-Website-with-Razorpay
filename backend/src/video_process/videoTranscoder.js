@@ -39,10 +39,10 @@ const QUALITY_PRESETS = {
 };
 
 const ENCODING_CONFIG = {
-  videoCodec: "libx264", // H.264 compression
-  audioCodec: "aac", // AAC audio (Advanced Audio Coding)
-  preset: "ultrafast", // Encoding speed (ultrafast/veryfast/fast/medium/slow)
-  segmentDuration: 6, // HLS segment/chunk length in seconds
+  videoCodec: "libx264",
+  audioCodec: "aac",
+  preset: "ultrafast",
+  segmentDuration: 6,
   playlistType: "vod",
   format: "hls",
 };

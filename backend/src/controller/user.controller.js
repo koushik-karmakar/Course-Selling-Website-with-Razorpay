@@ -121,31 +121,30 @@ const verifyPurchasedCourse = async (request, reply) => {
 
 const fetch_S3_Url = async (request, reply) => {
   try {
-    const { courseId, video_url, title } = request.body;
+    const { courseId } = request.body;
     const user = request.user;
-    if (!courseId || !video_url || !title || !user) {
+    if (!courseId || !user) {
       throw new ApiErrorHandle(400, "User not found" || "Invalid video");
     }
-    const signed_URL = generateSignedVideoUrl(video_url);
+
+    const result = await request.server.db.query(
+      `SELECT hls_master_playlist, transcoding_status FROM uploaded_videos WHERE course_id = $1 ORDER BY id DESC LIMIT 1`,
+      [courseId],
+    );
+    const video = result.rows[0];
+    if (video.transcoding_status !== "completed") {
+      return { error: "Video still processing" };
+    }
+    const hls_playlist = video.hls_master_playlist;
+    const signed_URL = generateSignedVideoUrl(hls_playlist);
     if (!signed_URL) {
       throw new ApiErrorHandle(400, "Fail to get Video");
-    }
-    const { rows } = await request.server.db.query(
-      "SELECT course_id FROM lessons WHERE user_id = $1 AND status = 'CREATED'",
-      [user.id],
-    );
-    if (rows.length === 0) {
-      await request.server.db.query(
-        `INSERT INTO lessons 
-     (course_id, user_id, title, video_key, duration, status)
-     VALUES ($1, $2, $3, $4, $5, $6)`,
-        [courseId, user.id, title, video_url, 0, "CREATED"],
-      );
     }
 
     return reply.code(200).send({
       success: true,
       signed_URL,
+      transcodingStatus: video.transcoding_status,
     });
   } catch (error) {
     return reply.code(error.statusCode || 500).send({

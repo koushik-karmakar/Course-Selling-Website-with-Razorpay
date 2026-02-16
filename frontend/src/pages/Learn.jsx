@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import videojs from "video.js";
-import "video.js/dist/video-js.css";
 import axios from "axios";
 import { FiChevronLeft, FiClock } from "react-icons/fi";
+import { HLSVideoPlayer } from "../components/HLSVideoPlayer";
 import { coursesData } from "../data/coursesData.jsx";
 import { useAlert } from "../components/Alert.jsx";
 
@@ -12,107 +11,107 @@ const LearnPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  const videoRef = useRef(null);
-  const playerRef = useRef(null);
-  const videoContainerRef = useRef(null);
-
   const currentCourse = coursesData.find((course) => course.url === slug);
-  const [videoSource, setVideoSource] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
-  const overallProgress = currentCourse?.lessons?.overallProgress;
-  const moduleProgress = currentCourse?.lessons?.moduleProgress;
+  const [videoSource, setVideoSource] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [videoInfo, setVideoInfo] = useState(null);
+
   const courseId = currentCourse?.id;
-  const video_url = currentCourse?.lessons?.video_url;
+  // const video_url = currentCourse?.lessons?.video_url;
   const title = currentCourse?.title;
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant",
-    });
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, []);
 
   useEffect(() => {
-    const fetch_video = async () => {
+    const fetchVideo = async () => {
+      if (!courseId) {
+        showAlert({
+          type: "error",
+          title: "Error",
+          message: "No video selected",
+        });
+        return;
+      }
+
       try {
+        setIsLoading(true);
         const backend = import.meta.env.VITE_BACKEND_PORT_LINK;
+
         const response = await axios.post(
           `${backend}/api/users/fetch-video-URL`,
-          { courseId, video_url, title },
+          { courseId },
           { withCredentials: true },
         );
-        setVideoSource(response.data.signed_URL);
+
+        const { signed_URL, transcodingStatus, video } = response.data;
+
+        // Check transcoding status
+        if (
+          transcodingStatus === "pending" ||
+          transcodingStatus === "processing"
+        ) {
+          showAlert({
+            type: "info",
+            title: "Processing",
+            message:
+              "Video is being processed. Please check back in a few minutes.",
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        if (transcodingStatus === "failed") {
+          showAlert({
+            type: "error",
+            title: "Error",
+            message: "Video processing failed. Please contact support.",
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        // Set video source
+        setVideoSource(signed_URL);
+        setVideoInfo(video);
+        setIsLoading(false);
       } catch (error) {
-        console.error("Video initialization error:", error);
+        console.error("Video fetch error:", error);
+
         const errorMessage =
           error.response?.data?.message ||
           error.message ||
-          "Failed to initialize video";
+          "Failed to load video";
 
         showAlert({
           type: "error",
-          title: "Server Error",
+          title: "Error",
           message: errorMessage,
         });
+
+        setIsLoading(false);
       }
     };
 
-    if (courseId && video_url && title) {
-      fetch_video();
+    if (courseId) {
+      fetchVideo();
     }
-  }, [courseId, video_url, title]);
+  }, [courseId]);
 
-  useEffect(() => {
-    if (!videoSource || !videoRef.current) return;
+  const handleVideoReady = (info) => {
+    console.log("Video ready:", info);
+  };
 
-    const player = videojs(videoRef.current, {
-      controls: true,
-      autoplay: false,
-      preload: "auto",
-      fluid: true,
-      playbackRates: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
-      controlBar: {
-        children: [
-          "playToggle",
-          "volumePanel",
-          "currentTimeDisplay",
-          "timeDivider",
-          "durationDisplay",
-          "progressControl",
-          "playbackRateMenuButton",
-          "fullscreenToggle",
-        ],
-      },
+  const handleVideoError = (error) => {
+    console.error("Video error:", error);
+    showAlert({
+      type: "error",
+      title: "Playback Error",
+      message: "Failed to play video. Please try again.",
     });
-
-    playerRef.current = player;
-
-    player.src({
-      src: videoSource,
-      type: "video/mp4",
-    });
-
-    player.on("play", () => {
-      setIsPlaying(true);
-    });
-
-    player.on("pause", () => {
-      setIsPlaying(false);
-    });
-
-    player.on("ended", () => {
-      setIsPlaying(false);
-    });
-
-    return () => {
-      if (playerRef.current) {
-        playerRef.current.dispose();
-        playerRef.current = null;
-      }
-    };
-  }, [videoSource]);
+  };
 
   if (!currentCourse) {
     return (
@@ -147,7 +146,9 @@ const LearnPage = () => {
             <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-blue-500 rounded-full transition-all duration-300"
-                style={{ width: `${moduleProgress}%` }}
+                style={{
+                  width: `${currentCourse?.lessons?.moduleProgress || 0}%`,
+                }}
               ></div>
             </div>
           </div>
@@ -157,32 +158,25 @@ const LearnPage = () => {
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-4">
-            <div
-              ref={videoContainerRef}
-              className="relative bg-black rounded-xl overflow-hidden"
-            >
-              {videoSource ? (
-                <div data-vjs-player>
-                  <video
-                    ref={videoRef}
-                    className="video-js vjs-big-play-centered vjs-theme-city"
-                    playsInline
-                  />
+            <div className="bg-black rounded-xl overflow-hidden">
+              {isLoading ? (
+                <div className="aspect-video flex items-center justify-center bg-gray-800">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+                    <p className="text-white">Loading video...</p>
+                  </div>
                 </div>
+              ) : videoSource ? (
+                <HLSVideoPlayer
+                  videoUrl={videoSource}
+                  poster={currentCourse.thumbnail}
+                  title={title}
+                  onReady={handleVideoReady}
+                  onError={handleVideoError}
+                />
               ) : (
                 <div className="aspect-video flex items-center justify-center bg-gray-800">
-                  <p>Loading video...</p>
-                </div>
-              )}
-
-              {!isPlaying && (
-                <div className="absolute top-4 left-4 right-4 pointer-events-none z-10 transition-opacity duration-300">
-                  <div className="inline-block bg-black/70 backdrop-blur-sm rounded-lg p-4 max-w-md">
-                    <h2 className="font-bold text-xl">{currentCourse.title}</h2>
-                    <p className="text-sm text-gray-300 mt-1">
-                      {currentCourse.title} • By {currentCourse.instructor}
-                    </p>
-                  </div>
+                  <p className="text-white">No video available</p>
                 </div>
               )}
             </div>
@@ -203,10 +197,10 @@ const LearnPage = () => {
               <div className="mt-6">
                 <h3 className="text-xl font-bold mb-3">About this lesson</h3>
                 <p className="text-gray-300 leading-relaxed">
-                  In this comprehensive lesson, you'll dive deep into React
-                  fundamentals. We'll cover everything from basic concepts to
-                  advanced techniques, with plenty of practical examples and
-                  real-world applications.
+                  {currentCourse.description ||
+                    "In this comprehensive lesson, you'll dive deep into the fundamentals. " +
+                      "We'll cover everything from basic concepts to advanced techniques, " +
+                      "with plenty of practical examples and real-world applications."}
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -216,10 +210,10 @@ const LearnPage = () => {
                     </h4>
                     <ul className="space-y-2">
                       {[
-                        "React component architecture",
-                        "State and props management",
-                        "Lifecycle methods",
-                        "Best practices and patterns",
+                        "Core concepts and fundamentals",
+                        "Practical implementation",
+                        "Best practices",
+                        "Real-world examples",
                       ].map((topic, index) => (
                         <li key={index} className="flex items-center">
                           <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
@@ -235,10 +229,10 @@ const LearnPage = () => {
                     </h4>
                     <ul className="space-y-2">
                       {[
-                        "Build reusable React components",
-                        "Manage application state effectively",
-                        "Understand React lifecycle",
-                        "Apply best practices in real projects",
+                        "Master key concepts",
+                        "Build practical projects",
+                        "Apply best practices",
+                        "Solve real problems",
                       ].map((outcome, index) => (
                         <li key={index} className="flex items-center">
                           <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>

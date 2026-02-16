@@ -155,8 +155,7 @@ async function startTranscoding(videoId, s3Key, courseId, db) {
     await db.query(
       `UPDATE uploaded_videos 
        SET transcoding_status = $1, 
-       WHERE id = $3`,
-      ["failed", videoId],
+       WHERE id = $2`[("failed", videoId)],
     );
   }
 }

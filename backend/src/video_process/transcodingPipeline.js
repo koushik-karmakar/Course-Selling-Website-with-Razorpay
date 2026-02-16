@@ -1,6 +1,8 @@
 import path from "path";
 import fs from "fs/promises";
 import os from "os";
+import dotenv from "dotenv";
+dotenv.config();
 import { downloadFromS3, uploadHLSFiles } from "./s3.js";
 import { FFmpegTranscoder } from "./videoTranscoder.js";
 async function processVideo(s3Key, videoId, courseId) {
@@ -29,7 +31,7 @@ async function processVideo(s3Key, videoId, courseId) {
     const hlsOutputDir = path.join(tempDir, "hls");
 
     const transcoder = new FFmpegTranscoder({
-      qualities: ["360p", "720p"],
+      qualities: ["360p", "480p", "720p", "1080p"],
     });
 
     const transcodingResult = await transcoder.transcodeToHLS(

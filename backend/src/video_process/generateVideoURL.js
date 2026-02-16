@@ -9,7 +9,7 @@ const privateKey = fs.readFileSync(
 );
 
 function generateSignedVideoUrl(videoPath) {
-  const cloudfrontDomain = "https://d3lnnnjcpq6u2d.cloudfront.net";
+  const cloudfrontDomain = process.env.CLOUDFRONT_DOMAIN;
   const cleanPath = videoPath.startsWith("/") ? videoPath.slice(1) : videoPath;
   return getSignedUrl({
     url: `${cloudfrontDomain}/${cleanPath}`,
