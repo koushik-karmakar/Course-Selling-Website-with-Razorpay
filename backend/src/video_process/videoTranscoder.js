@@ -49,7 +49,7 @@ const ENCODING_CONFIG = {
 
 class FFmpegTranscoder {
   constructor(options = {}) {
-    this.qualities = options.qualities || ["360p", "720p"];
+    this.qualities = options.qualities || ["480p", "720p"];
     this.encodingConfig = { ...ENCODING_CONFIG, ...options.encodingConfig };
     this.validateQualities();
   }
@@ -113,7 +113,7 @@ class FFmpegTranscoder {
   }
 
   async transcodeVariant(inputPath, outputDir, preset) {
-    console.log(`\n📹 Transcoding ${preset.name}...`);
+    console.log(`\nTranscoding ${preset.name}...`);
     const variantDir = path.join(outputDir, preset.name);
     await fs.mkdir(variantDir, { recursive: true });
     const playlistPath = path.join(variantDir, "playlist.m3u8");
@@ -142,7 +142,6 @@ class FFmpegTranscoder {
   runFFmpegCommand(inputPath, playlistPath, segmentPattern, preset) {
     return new Promise((resolve, reject) => {
       const startTime = Date.now();
-
       ffmpeg(inputPath)
         .videoCodec(this.encodingConfig.videoCodec)
         .videoBitrate(preset.videoBitrate)
@@ -178,9 +177,8 @@ class FFmpegTranscoder {
         })
         .on("error", (error, stdout, stderr) => {
           console.error(`\n FFmpeg error: ${error.message}`);
-
           if (stderr) {
-            console.error(`   Debug info: ${stderr.substring(0, 500)}...`);
+            console.error(`Debug info: ${stderr.substring(0, 500)}...`);
           }
 
           reject(new Error(`FFmpeg transcoding failed: ${error.message}`));

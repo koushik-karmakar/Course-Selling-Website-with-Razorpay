@@ -24,7 +24,7 @@ async function downloadFromS3(s3Key, localPath) {
     response.Body.pipe(writeStream)
       .on("error", reject)
       .on("finish", () => {
-        console.log("✅ Download complete\n");
+        console.log("Download complete\n");
         resolve();
       });
   });

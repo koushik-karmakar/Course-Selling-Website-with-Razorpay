@@ -57,6 +57,7 @@ async function processVideo(s3Key, videoId, courseId) {
     await fs.rm(tempDir, { recursive: true, force: true });
     console.log("Cleanup complete\n");
 
+
     const cloudfrontUrl = `https://${process.env.CLOUDFRONT_DOMAIN}/${masterPlaylistKey}`;
 
     const result = {
@@ -85,7 +86,7 @@ async function processVideo(s3Key, videoId, courseId) {
     console.error(`   Error: ${error.message}`);
     console.error("========================================\n");
 
-    await fs.rm(tempDir, { recursive: true, force: true }).catch(() => {});
+    await fs.rm(tempDir, { recursive: true, force: true }).catch(() => { });
     throw error;
   }
 }
@@ -104,7 +105,7 @@ async function getVideoMetadata(s3Key) {
 
     return metadata;
   } catch (error) {
-    await fs.rm(tempDir, { recursive: true, force: true }).catch(() => {});
+    await fs.rm(tempDir, { recursive: true, force: true }).catch(() => { });
     throw error;
   }
 }

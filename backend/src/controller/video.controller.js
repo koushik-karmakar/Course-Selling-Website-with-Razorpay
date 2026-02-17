@@ -48,8 +48,6 @@ const uploadRawVideo = async (request, reply) => {
     const key = `raw-videos/${Date.now()}-${path.basename(fileName)}`;
     const fileSize = fileBuffer.length;
     console.log("Uploading to S3 with key:", key);
-    console.log("Bucket:", process.env.S3_BUCKET);
-    console.log("Region:", process.env.S3_REGION);
 
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET,
@@ -135,11 +133,13 @@ async function startTranscoding(videoId, s3Key, courseId, db) {
        SET hls_master_playlist = $1,
            hls_variants = $2,
            transcoding_status = $3,
-           cloudfront_url = $4
-       WHERE id = $5`,
+           processing_status = $4,
+           cloudfront_url = $5
+       WHERE id = $6`,
       [
         result.masterPlaylist,
         JSON.stringify(result.variants),
+        "completed",
         "completed",
         result.cloudfrontUrl,
         videoId,
@@ -155,7 +155,9 @@ async function startTranscoding(videoId, s3Key, courseId, db) {
     await db.query(
       `UPDATE uploaded_videos 
        SET transcoding_status = $1, 
-       WHERE id = $2`[("failed", videoId)],
+           processing_status = $2 
+       WHERE id = $3`,
+      ["failed", "failed", videoId],
     );
   }
 }
@@ -172,8 +174,7 @@ const getTranscodingStatus = async (request, reply) => {
         transcoding_status,
         transcoding_started_at,
         transcoding_completed_at,
-        cloudfront_url,
-        hls_variants
+        cloudfront_url
        FROM uploaded_videos 
        WHERE id = $1`,
       [videoId],
