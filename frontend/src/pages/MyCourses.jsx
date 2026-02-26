@@ -25,65 +25,6 @@ const MyCourses = () => {
   const { AlertComponent, showAlert } = useAlert();
   const [purchasedCourses, setPurchasedCourses] = useState([]);
 
-  // const [suggestedCourses, setSuggestedCourses] = useState([
-  //   {
-  //     id: 4,
-  //     title: "Full Stack Web Development",
-  //     instructor: "Michael Chen",
-  //     thumbnail:
-  //       "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=225&fit=crop",
-  //     price: "$89.99",
-  //     originalPrice: "$129.99",
-  //     rating: 4.9,
-  //     students: 2450,
-  //     duration: "52h",
-  //     category: "Web Development",
-  //     discount: 30,
-  //   },
-  //   {
-  //     id: 5,
-  //     title: "Mobile App Development with Flutter",
-  //     instructor: "Sarah Williams",
-  //     thumbnail:
-  //       "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=225&fit=crop",
-  //     price: "$74.99",
-  //     originalPrice: "$99.99",
-  //     rating: 4.8,
-  //     students: 1870,
-  //     duration: "38h",
-  //     category: "Mobile",
-  //     discount: 25,
-  //   },
-  //   {
-  //     id: 6,
-  //     title: "AWS Certified Solutions Architect",
-  //     instructor: "David Lee",
-  //     thumbnail:
-  //       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=225&fit=crop",
-  //     price: "$99.99",
-  //     originalPrice: "$149.99",
-  //     rating: 4.7,
-  //     students: 3120,
-  //     duration: "42h",
-  //     category: "Cloud",
-  //     discount: 33,
-  //   },
-  //   {
-  //     id: 7,
-  //     title: "UI/UX Design Fundamentals",
-  //     instructor: "Emma Wilson",
-  //     thumbnail:
-  //       "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=225&fit=crop",
-  //     price: "$59.99",
-  //     originalPrice: "$79.99",
-  //     rating: 4.6,
-  //     students: 1560,
-  //     duration: "24h",
-  //     category: "Design",
-  //     discount: 25,
-  //   },
-  // ]);
-
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -474,7 +415,7 @@ const MyCourses = () => {
                 </Link>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-4">
                 {filteredPurchasedCourses.map((course) => (
                   <div
                     key={course.id}
@@ -500,7 +441,7 @@ const MyCourses = () => {
                     </div>
 
                     <div className="flex-1 p-4 sm:p-5 flex flex-col">
-                      <div className="mb-3 flex-1">
+                      <div className=" flex-1">
                         <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors line-clamp-2 mb-2">
                           {course.title}
                         </h3>
@@ -508,7 +449,7 @@ const MyCourses = () => {
                           By {course.instructor}
                         </p>
 
-                        <div className="mb-4">
+                        {/* <div className="mb-4">
                           <div className="flex items-center justify-between text-sm mb-2">
                             <span className="text-gray-400">Progress</span>
                             <span className="font-medium text-white">
@@ -521,7 +462,7 @@ const MyCourses = () => {
                               style={{ width: `${course.progress}%` }}
                             ></div>
                           </div>
-                        </div>
+                        </div> */}
 
                         <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
                           <div className="flex items-center">

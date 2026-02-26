@@ -187,6 +187,37 @@ const fetch_S3_Url = async (request, reply) => {
     });
   }
 };
+const verifyCoursePurchased = async (request, reply) => {
+  try {
+    const { courseId } = request.query;
+    const user = request.user;
+
+    if (!user) {
+      throw new ApiErrorHandle(401, "User not authenticated");
+    }
+
+    if (!courseId) {
+      throw new ApiErrorHandle(400, "Course ID is required");
+    }
+
+    const { rows } = await request.server.db.query(
+      `SELECT id FROM payments WHERE user_id = $1 AND course_id = $2 AND status = 'SUCCESS'`,
+      [user.id, courseId],
+    );
+
+    const isPurchased = rows.length > 0;
+
+    return reply.code(200).send({
+      success: true,
+      isPurchased,
+    });
+  } catch (error) {
+    return reply.code(error.statusCode || 500).send({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+}
 export {
   registerUser,
   loginUser,
@@ -194,4 +225,5 @@ export {
   logoutUser,
   verifyPurchasedCourse,
   fetch_S3_Url,
+  verifyCoursePurchased
 };

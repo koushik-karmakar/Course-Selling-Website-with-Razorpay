@@ -24,10 +24,8 @@ export const AuthProvider = ({ children }) => {
         });
 
         setUser(data.user);
-        console.log(data.user);
       } catch (error) {
         setUser(null);
-        navigate("/signin");
       } finally {
         setLoading(false);
       }
@@ -74,7 +72,6 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       const backend = import.meta.env.VITE_BACKEND_PORT_LINK;
-
       await axios.post(
         `${backend}/api/users/logout`,
         {},
@@ -99,13 +96,10 @@ export const AuthProvider = ({ children }) => {
           withCredentials: true,
         },
       );
-
-      localStorage.setItem(
-        "code-master-user",
-        JSON.stringify(response.data.user),
-      );
-      // setUser(response.data.user);
-      return { success: true, user: response.data.user };
+      return {
+        success: true,
+        message: response?.data.message,
+      };
     } catch (error) {
       return {
         success: false,

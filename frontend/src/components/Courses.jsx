@@ -150,15 +150,14 @@ const Courses = () => {
                   <button
                     onClick={() =>
                       purchasedCourseIds.includes(course.id)
-                        ? navigate(`/my-courses`)
+                        ? navigate(`/course/${course.url}`)
                         : navigate(`/course/${course.url}`)
                     }
                     className={`cursor-pointer w-full py-3 rounded-xl font-semibold transition-all
-                        ${
-                          purchasedCourseIds.includes(course.id)
-                            ? "bg-green-600 hover:bg-green-700 text-white"
-                            : "bg-linear-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700"
-                        }
+                        ${purchasedCourseIds.includes(course.id)
+                        ? "bg-green-600 hover:bg-green-700 text-white"
+                        : "bg-linear-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700"
+                      }
                       `}
                   >
                     {purchasedCourseIds.includes(course.id) ? (

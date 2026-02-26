@@ -17,6 +17,7 @@ import {
   MessageCircle,
   ChevronDown,
   ChevronUp,
+  CheckCircle
 } from "lucide-react";
 import { coursesData } from "../data/coursesData.jsx";
 import { useAlert } from "../components/Alert.jsx";
@@ -27,7 +28,10 @@ const EnrollmentPage = () => {
   const [selectedSection, setSelectedSection] = useState("overview");
   const [expandedSyllabus, setExpandedSyllabus] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCoursePurchesed, setIsCoursePurchesed] = useState(false);
   const { AlertComponent, showAlert } = useAlert();
+  const { slug } = useParams();
+  const course = coursesData.find((c) => c.url === slug);
 
   const isUserLoggedIn = async () => {
     try {
@@ -45,7 +49,6 @@ const EnrollmentPage = () => {
 
   const handleEnrollment = async () => {
     const user = await isUserLoggedIn();
-    console.log(user);
     if (!user) {
       showAlert({
         type: "warning",
@@ -61,6 +64,8 @@ const EnrollmentPage = () => {
           });
         },
       });
+    } else if (isCoursePurchesed) {
+      navigate(`/learn/${course.url}`);
     } else {
       enrollUserInCourse();
     }
@@ -84,6 +89,29 @@ const EnrollmentPage = () => {
     }
   };
 
+  const isCoursePurchase = async () => {
+    try {
+      const backend = import.meta.env.VITE_BACKEND_PORT_LINK;
+      const { data } = await axios.get(`${backend}/api/users/verify_course_purchased`, {
+        withCredentials: true,
+        params: {
+          courseId: course.id
+        }
+      });
+
+      console.log(data);
+      return data.isPurchased;
+    } catch (err) {
+      return null;
+    }
+  }
+  useEffect(() => {
+    const checkPurchase = async () => {
+      const isPurchased = await isCoursePurchase();
+      setIsCoursePurchesed(isPurchased);
+    }
+    checkPurchase();
+  }, [])
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -92,8 +120,6 @@ const EnrollmentPage = () => {
     });
   }, []);
 
-  const { slug } = useParams();
-  const course = coursesData.find((c) => c.url === slug);
 
   const toggleSyllabus = (index) => {
     setExpandedSyllabus((prev) =>
@@ -124,7 +150,7 @@ const EnrollmentPage = () => {
           <div className="container mx-auto px-4 py-3 sm:py-4">
             <div className="flex items-center justify-between">
               <button
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/#courses")}
                 className="cursor-pointer flex items-center space-x-2 text-gray-300 hover:text-white transition-colors text-sm sm:text-base"
               >
                 <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -177,38 +203,50 @@ const EnrollmentPage = () => {
                       />
                       <div className="absolute inset-0 bg-black/5"></div>
                     </div>
-                    <div className="absolute inset-0 bg-black/5 backdrop-blur-sm flex items-center justify-center">
-                      <div className="text-center px-4">
-                        <div className="relative">
-                          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-full bg-linear-to-r from-blue-500/40 to-purple-500/40 border border-blue-500/50 flex items-center justify-center backdrop-blur-sm">
-                            <Lock className="w-8 h-8 sm:w-10 sm:h-10 text-blue-300" />
+                    {isCoursePurchesed ? "" :
+                      <div className="cursor-not-allowed absolute inset-0 bg-black/5 backdrop-blur-sm flex items-center justify-center">
+                        <div className="text-center px-4">
+                          <div className="relative">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-full bg-linear-to-r from-blue-500/40 to-purple-500/40 border border-blue-500/50 flex items-center justify-center backdrop-blur-sm">
+                              <Lock className="w-8 h-8 sm:w-10 sm:h-10 text-blue-300" />
+                            </div>
+                            <div className="absolute inset-0 animate-ping rounded-full bg-blue-500/30"></div>
                           </div>
-                          <div className="absolute inset-0 animate-ping rounded-full bg-blue-500/30"></div>
+                          <p className="text-white text-sm sm:text-base mt-4 font-medium drop-shadow-lg">
+                            Preview available after purchase
+                          </p>
                         </div>
-                        <p className="text-white text-sm sm:text-base mt-4 font-medium drop-shadow-lg">
-                          Preview available after purchase
-                        </p>
+                      </div>
+                    }
+                  </div>
+                  {isCoursePurchesed ?
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent">
+                      <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6">
+                        <div className="px-3 py-2 sm:px-4 sm:py-2 bg-black/60 backdrop-blur-sm rounded-lg">
+                          <h2 className="text-lg sm:text-xl font-bold">
+                            {course.title}
+                          </h2>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent">
-                    <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6">
-                      <div className="px-3 py-2 sm:px-4 sm:py-2 bg-black/60 backdrop-blur-sm rounded-lg">
-                        <h2 className="text-lg sm:text-xl font-bold">
-                          {course.title}
-                        </h2>
-                      </div>
-                    </div>
-                  </div>
+                    : ""}
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <button
-                    disabled
-                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-fullbg-linear-to-r from-blue-500 to-purple-600 flex items-center justify-center opacity-50 cursor-not-allowed"
-                  >
-                    <Play className="w-5 h-5 sm:w-8 sm:h-8 ml-0.5 sm:ml-1 text-white" />
-                  </button>
-                </div>
+                {isCoursePurchesed ?
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <button
+                      onClick={() => navigate(`/learn/${course.url}`)}
+                      className="cursor-pointer group relative w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center"
+                      aria-label="Play course"
+                    >
+                      <span className="absolute inset-0 rounded-full bg-blue-500/40 animate-ping group-hover:bg-purple-500/50" />
+                      <span className="absolute inset-0 scale-125 rounded-full bg-purple-600/20 animate-ping [animation-delay:300ms]" />
+                      <span className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 shadow-[0_8px_32px_rgba(99,102,241,0.5)] transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_12px_40px_rgba(147,51,234,0.6)]" />
+                      <span className="absolute inset-0 rounded-full bg-gradient-to-br from-white/25 to-transparent" />
+                      <Play className="relative z-10 w-5 h-5 sm:w-8 sm:h-8 ml-0.5 sm:ml-1 text-white drop-shadow-lg transition-transform duration-300 group-hover:scale-110" />
+                    </button>
+                  </div> :
+                  ""
+                }
               </div>
               <div className="hidden md:grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <div className="bg-gray-800/50 rounded-lg p-4 text-center">
@@ -255,11 +293,10 @@ const EnrollmentPage = () => {
                       <button
                         key={section}
                         onClick={() => setSelectedSection(section)}
-                        className={`flex-1 min-w-20 py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium capitalize transition-all text-sm sm:text-base ${
-                          selectedSection === section
-                            ? "bg-linear-to-r from-blue-500 to-purple-600 text-white"
-                            : "text-gray-400 hover:text-white"
-                        }`}
+                        className={`flex-1 min-w-20 py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium capitalize transition-all text-sm sm:text-base ${selectedSection === section
+                          ? "bg-linear-to-r from-blue-500 to-purple-600 text-white"
+                          : "text-gray-400 hover:text-white"
+                          }`}
                       >
                         {section}
                       </button>
@@ -461,25 +498,59 @@ const EnrollmentPage = () => {
               <div className="sticky top-20 sm:top-24">
                 <div className="bg-linear-to-br from-gray-800/50 to-gray-900/50 rounded-2xl border border-gray-700 overflow-hidden mb-6">
                   <div className="p-4 sm:p-6 border-b border-gray-700">
-                    <div className="flex items-baseline flex-wrap gap-2 mb-2">
-                      <span className="text-3xl sm:text-4xl font-bold">
-                        {course.price}
-                      </span>
-                      <span className="line-through text-gray-400 text-lg sm:text-xl">
-                        {course.originalPrice}
-                      </span>
-                      <span className="px-2 py-1 text-xs font-boldbg-linear-to-r from-green-500 to-emerald-500 text-white rounded-full">
-                        SAVE 60%
-                      </span>
-                    </div>
-                    <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4">
-                      One-time payment • Lifetime access
-                    </p>
+                    {isCoursePurchesed ? (
+                      <div className="mb-3 sm:mb-4">
+
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-emerald-400/20 to-teal-500/20 border border-emerald-500/30">
+                            <CheckCircle className="w-4 h-4 text-emerald-400" />
+                            <span className="text-emerald-400 font-semibold text-sm">Already Purchased</span>
+                          </div>
+                        </div>
+
+
+                        <div className="flex items-baseline flex-wrap gap-2 mb-1">
+                          <span className="text-3xl sm:text-4xl font-bold text-white">
+                            {course.price}
+                          </span>
+                          <span className="line-through text-gray-500 text-lg sm:text-xl">
+                            {course.originalPrice}
+                          </span>
+                          <span className="px-2 py-1 text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full">
+                            SAVED 60%
+                          </span>
+                        </div>
+                        <p className="text-gray-400 text-xs sm:text-sm">
+                          You paid <span className="text-white font-medium">{course.price}</span> • Lifetime access unlocked
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="mb-3 sm:mb-4">
+                        <div className="flex items-baseline flex-wrap gap-2 mb-2">
+                          <span className="text-3xl sm:text-4xl font-bold">
+                            {course.price}
+                          </span>
+                          <span className="line-through text-gray-400 text-lg sm:text-xl">
+                            {course.originalPrice}
+                          </span>
+                          <span className="px-2 py-1 text-xs font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full">
+                            SAVE 60%
+                          </span>
+                        </div>
+                        <p className="text-gray-400 text-xs sm:text-sm">
+                          One-time payment • Lifetime access
+                        </p>
+                      </div>
+                    )}
 
                     <button
                       onClick={handlePurchase}
                       disabled={isLoading}
-                      className="cursor-pointer w-full py-3 mb-3 sm:mb-4 rounded-xl bg-linear-to-r from-blue-500 to-purple-600 text-white font-semibold text-base sm:text-lg hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-blue-500/25 disabled:opacity-70 disabled:cursor-not-allowed relative group"
+                      className={`cursor-pointer w-full py-3 mb-3 sm:mb-4 rounded-xl text-white font-semibold text-base sm:text-lg transition-all shadow-lg relative group disabled:opacity-70 disabled:cursor-not-allowed
+                      ${isCoursePurchesed
+                          ? "bg-green-600 hover:bg-green-700 text-white"
+                          : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-blue-500/25 hover:shadow-blue-500/40"
+                        }`}
                     >
                       {isLoading ? (
                         <div className="flex items-center justify-center space-x-2">
@@ -491,7 +562,7 @@ const EnrollmentPage = () => {
                       ) : (
                         <div className="flex items-center justify-center space-x-2">
                           <span className="text-sm sm:text-base">
-                            Enroll Now
+                            {isCoursePurchesed ? "Watch Video" : "Enroll Now"}
                           </span>
                           <svg
                             className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform"

@@ -101,7 +101,7 @@ const LearnPage = () => {
   }, [courseId]);
 
   const handleVideoReady = (info) => {
-    console.log("Video ready:", info);
+    // console.log("Video ready:", info);
   };
 
   const handleVideoError = (error) => {
@@ -142,16 +142,7 @@ const LearnPage = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-blue-500 rounded-full transition-all duration-300"
-                style={{
-                  width: `${currentCourse?.lessons?.moduleProgress || 0}%`,
-                }}
-              ></div>
-            </div>
-          </div>
+          <div className="flex items-center space-x-4"></div>
         </div>
       </div>
 

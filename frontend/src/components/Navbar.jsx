@@ -17,7 +17,7 @@ const Navbar = () => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const { user, logout, loading } = useAuth();
   const dropdownRef = useRef(null);
- 
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -110,8 +110,8 @@ const Navbar = () => {
                       onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                       className=" cursor-pointer flex items-center space-x-2 px-4 py-2 rounded-lg dark:bg-gray-800/50 bg-gray-100/50 border dark:border-gray-700 border-gray-300 hover:border-blue-500 transition-all hover:shadow-lg"
                     >
-                      <div className="w-8 h-8 rounded-full bg-linear-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
-                        {getUserInitials()}
+                      <div className="w-8 h-8 rounded-full bg-linear-to-r border dark:border-gray-700 border-gray-300 flex items-center justify-center text-white">
+                        <User className="w-4 h-4" />
                       </div>
                       <span className="dark:text-gray-300 text-gray-700 font-medium">
                         {user.firstName || user.email?.split("@")[0] || "User"}
